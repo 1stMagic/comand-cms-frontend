@@ -1,0 +1,9 @@
+{
+  "site": "demo",
+  "api": {
+    "baseUrl": "http://localhost:55578/api/v1/"
+  },
+  "assets": {
+    "baseUrl": "http://localhost:55578/assets/"
+  }
+}

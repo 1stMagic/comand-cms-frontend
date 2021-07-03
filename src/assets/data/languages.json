@@ -1,0 +1,26 @@
+[
+  {
+    "iso2": "de",
+    "name": "Deutsch",
+    "tooltip": "Sprache zu deutsch wechseln",
+    "link": {
+      "path": "#"
+    }
+  },
+  {
+    "iso2": "en",
+    "name": "English",
+    "tooltip": "Switch language to English",
+    "link": {
+      "path": "#"
+    }
+  },
+  {
+    "iso2": "fr",
+    "name": "Francais",
+    "tooltip": "Switch language to Francais",
+    "link": {
+      "path": "#"
+    }
+  }
+]

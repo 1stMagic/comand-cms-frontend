@@ -1,0 +1,54 @@
+/* cms-sitestructure.scss - last update: 2021/04/25 by Raphael Biock - IT IS NOT RECOMMENDED TO EDIT THIS FILE (TO AVOID TROUBLESHOOTING AFTER UPDATING) */
+
+/* begin table of contents --------------------------------------------------------------------------------------------------------------------------------------------------- */
+/*
+- IMPORTS ------------------------
+- BASIC STRUCTURE ------------------------
+*/
+/* end table of contents --------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+/* ---------------------------------------------- BEGIN IMPORTS -------------------------------------------------- */
+@import "../global/variables";  /* scss-variables (only used for media-query-breakpoints) */
+/* ---------------------------------------------- END IMPORTS -------------------------------------------------- */
+
+/* ---------------------------------------------- BEGIN BASIC STRUCTURE -------------------------------------------------- */
+.vue-container {
+  display: grid;
+  grid-template-areas: "site-header" "main" "site-footer" ;
+  grid-template-rows: min-content auto min-content;
+  min-height: 100%;
+}
+
+#app.slideshow {
+  grid-template-areas: "site-header" "slideshow" "main" "site-footer" ;
+  grid-template-rows: min-content min-content auto min-content;
+}
+
+.slideshow-wrapper {
+  grid-area: slideshow;
+}
+
+.slideshow-wrapper img {
+  display: block;
+  margin: 0 auto;
+}
+
+#site-header {
+  grid-area: site-header;
+}
+
+#main-navigation {
+  grid-area: main-navigation;
+}
+
+main {
+  grid-area: main;
+  width: 100%;
+  min-width: 0; /* required to avoid elements inside main-container to expand the grid horizontally */
+  z-index: 10;
+}
+
+#site-footer {
+  grid-area: site-footer;
+}
+/* ---------------------------------------------- END BASIC STRUCTURE -------------------------------------------------- */
