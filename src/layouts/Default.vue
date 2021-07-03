@@ -1,6 +1,6 @@
 <template>
   <div class="vue-container">
-    <CmdSiteHeader :mainNavigationEntries="$store.state.site.navigation.items" :sticky="true" @click="onNavigation">
+    <CmdSiteHeader :mainNavigationEntries="$store.state.site.mainNavigation.items" :sticky="true" @click="onNavigation">
       <template v-slot:top-header>
         <CmdTopHeaderNavigation :topHeaderNavigationData="topHeaderNavigationData" v-if="topHeaderNavigationData" />
       </template>
@@ -28,9 +28,9 @@
 import accordionData from "@/assets/data/accordion.json"
 import boxUserData from '@/assets/data/box-user.json'
 import boxProductData from '@/assets/data/box-product.json'
-import topHeaderNavigationData from "@/assets/data/top-header-navigation.json"
+// import topHeaderNavigationData from "@/assets/data/top-header-navigation.json"
 import breadcrumbData from "@/assets/data/breadcrumbs.json"
-import footerNavigationData from "@/assets/data/footer-navigation.json"
+// import footerNavigationData from "@/assets/data/footer-navigation.json"
 import openingHoursData from "@/assets/data/opening-hours.json"
 import addressData from "@/assets/data/address.json"
 
@@ -52,8 +52,8 @@ import CmdAddressData from 'comand-component-library/src/components/CmdAddressDa
         boxUserData,
         boxProductData,
         breadcrumbData,
-        footerNavigationData,
-        topHeaderNavigationData,
+        // footerNavigationData,
+        // topHeaderNavigationData,
         openingHoursData,
         addressData
       }
@@ -90,6 +90,34 @@ import CmdAddressData from 'comand-component-library/src/components/CmdAddressDa
               })
           }
           return languages
+        },
+        topHeaderNavigationData() {
+            let items = this.$store.state.site.topNavigation.items
+            let mappedItems = []
+            for(let i = 0; i < items.length; i++) {
+                mappedItems.push({
+                    type: "href",
+                    path: items[i].href,
+                    target: items[i].target,
+                    linkName: items[i].name,
+                    iconClass: items[i].iconClass
+                })
+            }
+            return mappedItems
+        },
+        footerNavigationData() {
+            let items = this.$store.state.site.footerNavigation.items
+            let mappedItems = []
+            for(let i = 0; i < items.length; i++) {
+                mappedItems.push({
+                    type: "href",
+                    path: items[i].href,
+                    target: items[i].target,
+                    linkName: items[i].name,
+                    iconClass: items[i].iconClass
+                })
+            }
+            return mappedItems
         }
     },
     methods: {

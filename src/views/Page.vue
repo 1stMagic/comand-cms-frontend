@@ -1,15 +1,14 @@
 <template>
-  <CmdWidthLimitationWrapper>
-    <h1>{{ mainHeadline }}</h1>
-  </CmdWidthLimitationWrapper>
-  <component v-for="(component, index) in components" :key="index" :is="component.name" v-bind="component.props" />
+  <PageComponent :components="components" />
 </template>
 
 <script>
+  import PageComponent from "../components/PageComponent"
   import axios from "axios"
 
   export default {
       name: "Page",
+      components: { PageComponent },
       props: {
           page: {
               type: [Array,String]
@@ -72,31 +71,7 @@
           },
           processComponents(pageData) {
               this.mainHeadline = pageData.title // assign headline
-              this.components = []
-              if (!pageData?.components) {
-                  return
-              }
-              pageData.components.forEach(component => {
-                  const comp = {
-                      name: component.componentName
-                  }
-                  if (component.componentName === "CmdSlideshow") {
-                      comp.props = this.mapSlideshowProperties(component)
-                  }
-                  this.components.push(comp)
-              })
-          },
-          mapSlideshowProperties(componentData) {
-              const assetsBaseUrl = this.$store.state.site.assets.baseUrl
-              return {
-                  slideshowItems: componentData.items.map(item => {
-                    item.images = item.images.map(image => {
-                        image.imgPath = new URL(image.imgPath, assetsBaseUrl).href
-                        return image
-                    })
-                    return item
-                })
-              }
+              this.components = pageData?.components || []
           }
       },
       watch: {
