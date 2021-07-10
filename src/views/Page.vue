@@ -1,4 +1,7 @@
 <template>
+  <CmdWidthLimitationWrapper inner-component="div">
+    <CmdBreadcrumbs :breadcrumbLinks="breadcrumbs" breadcrumbLabel="You are here:" />
+  </CmdWidthLimitationWrapper>
   <PageComponent :components="components" />
 </template>
 
@@ -12,12 +15,16 @@
       props: {
           page: {
               type: [Array,String]
+          },
+          language: {
+              type: String
           }
       },
       data() {
         return {
             components: [],
-            mainHeadline: ""
+            mainHeadline: "",
+            breadcrumbs: []
         }
       },
       created() {
@@ -36,11 +43,12 @@
           loadPage() {
               const url = new URL(`pages/of-site/${this.$store.state.site.name}`, this.$store.state.site.api.baseUrl)
               url.searchParams.set("relativePagePath", this.pageName.replace(/\.html$/, ""))
-              axios.get(url.href)
+              axios.get(url.href, {headers: {"Accept-Language": this.$store.state.language}})
                   .then(response => response.data)
                   .then(this.updatePageTitle)
                   .then(this.updatePageMetaData)
                   .then(this.updateBodyId)
+                  .then(this.processBreadcrumbs)
                   .then(this.processComponents)
                   .catch(error => console.error(error))
           },
@@ -68,6 +76,10 @@
              id = id.replace(".", "-")
              document.body.id = id // assign id to body
              return pageData // return pageData to continue chaining
+          },
+          processBreadcrumbs(pageData) {
+              this.breadcrumbs = pageData.breadcrumbs || []
+              return pageData
           },
           processComponents(pageData) {
               this.mainHeadline = pageData.title // assign headline

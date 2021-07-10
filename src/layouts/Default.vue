@@ -1,6 +1,6 @@
 <template>
   <div class="vue-container">
-    <CmdSiteHeader :mainNavigationEntries="$store.state.site.mainNavigation.items" :sticky="true" @click="onNavigation">
+    <CmdSiteHeader :navigation-entries="[]" :languages="[]" :close-offcanvas="{}" :mainNavigationEntries="$store.state.site.mainNavigation" :sticky="true" @click="onNavigation">
       <template v-slot:top-header>
         <CmdTopHeaderNavigation :topHeaderNavigationData="topHeaderNavigationData" v-if="topHeaderNavigationData" />
       </template>
@@ -9,9 +9,6 @@
       </template>
     </CmdSiteHeader>
     <main class="container" id="content">
-      <CmdWidthLimitationWrapper inner-component="div">
-        <CmdBreadcrumbs :breadcrumbLinks="breadcrumbData" breadcrumbLabel="You are here:" />
-      </CmdWidthLimitationWrapper>
       <router-view />
     </main>
     <CmdWidthLimitationWrapper id="site-footer" inner-component="footer">
@@ -44,6 +41,8 @@ import CmdSwitchLanguage from 'comand-component-library/src/components/CmdSwitch
 import CmdFooterNavigation from 'comand-component-library/src/components/CmdFooterNavigation'
 import CmdOpeningHours from 'comand-component-library/src/components/CmdOpeningHours'
 import CmdAddressData from 'comand-component-library/src/components/CmdAddressData'
+import axios from "axios"
+import store from "../store"
 
   export default {
     data() {
@@ -72,18 +71,18 @@ import CmdAddressData from 'comand-component-library/src/components/CmdAddressDa
     },
     computed: {
         languagesData() {
-          const supportedLanguages = this.$store.state.site.config.supportedLanguages
+          const supportedLanguages = this.$store.state.site.supportedLanguages
           const languages = []
           for(let i = 0; i < supportedLanguages.length; i++) {
               languages.push({
-                  "iso2": supportedLanguages[i],
-                  "tooltip": supportedLanguages[i],
-                  "name": supportedLanguages[i],
+                  "iso2": supportedLanguages[i].language,
+                  "tooltip": supportedLanguages[i].title,
+                  "name": supportedLanguages[i].title,
                   "link": {
                       "type": "router",
                       "name": "Page",
                       "params": {
-                          "language": supportedLanguages[i],
+                          "language": supportedLanguages[i].language,
                           "page": this.$route.params.page
                       }
                   }
@@ -92,7 +91,7 @@ import CmdAddressData from 'comand-component-library/src/components/CmdAddressDa
           return languages
         },
         topHeaderNavigationData() {
-            let items = this.$store.state.site.topNavigation.items
+            let items = this.$store.state.site.topNavigation
             let mappedItems = []
             for(let i = 0; i < items.length; i++) {
                 mappedItems.push({
@@ -106,7 +105,7 @@ import CmdAddressData from 'comand-component-library/src/components/CmdAddressDa
             return mappedItems
         },
         footerNavigationData() {
-            let items = this.$store.state.site.footerNavigation.items
+            let items = this.$store.state.site.footerNavigation
             let mappedItems = []
             for(let i = 0; i < items.length; i++) {
                 mappedItems.push({
@@ -160,6 +159,12 @@ import CmdAddressData from 'comand-component-library/src/components/CmdAddressDa
         "$store.state.language":{
           handler() {
             document.querySelector("html").lang = this.$store.state.language
+              const url = new URL(`sites/${this.$store.state.site.name}`, this.$store.state.site.api.baseUrl)
+              axios.get(url.href, {headers: {"Accept-Language": this.$store.state.language}})
+                  .then(response => response.data)
+                  .then(({supportedLanguages, mainNavigation, topNavigation, footerNavigation}) => ({ ...this.$store.state.site, supportedLanguages, mainNavigation, topNavigation, footerNavigation }))
+                  .then(site => store.commit("site", site))
+                  .catch(error => console.error(error))
           }, immediate: true
         }
       }

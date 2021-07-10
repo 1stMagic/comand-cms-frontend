@@ -39,10 +39,10 @@ const router = createRouter({
 
 router.beforeEach(to => {
   if (to.params.language && to.params.language !== store.state.language) {
-    if (store.state.site?.config?.supportedLanguages?.includes(to.params.language)) {
+    if (store.state.site?.supportedLanguages?.some(supportedLanguage => supportedLanguage.language === to.params.language)) {
       store.commit("language", to.params.language)
-    } else if (to.params.language !== store.state.site?.config?.language) {
-      store.commit("language", store.state.site?.config?.language ?? "de")
+    } else if (to.params.language !== store.state.site?.language) {
+      store.commit("language", store.state.site?.language ?? "de")
       const newRoute = { ...to }
       newRoute.params.language = store.state.language
       return newRoute

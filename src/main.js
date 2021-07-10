@@ -38,16 +38,16 @@ axios.get(process.env.BASE_URL + "cms-config.json")
         const url = new URL("sites/" + encodeURIComponent(config.site), config.api.baseUrl)
         return axios.get(url.href)
             .then(response => response.data)
-            .then(site => ({ ...site, api: config.api, assets: config.assets }))
+            .then(site => ({ ...site, name: config.site, api: config.api, assets: config.assets }))
     })
     .then(site => {
         store.commit("site", site)
-        store.commit("language", site.config.language)
+        store.commit("language", site.language)
         return site
     })
     .then(site => {
-        return import(`./assets/themes/${site.config.theme}.css`)
-            .then(() => import(`./layouts/${site.config.layout}`))
+        return import(`./assets/themes/${site.theme}.css`)
+            .then(() => import(`./layouts/${site.layout}`))
     })
     .then(layout => {
         /* mount vue instance to dom-element */
@@ -56,7 +56,7 @@ axios.get(process.env.BASE_URL + "cms-config.json")
         return app
     })
     .then(app => {
-        Object.entries(componentLibraryComponents).forEach(([name]) => console.log("Comp: " + name))
+        // Object.entries(componentLibraryComponents).forEach(([name]) => console.log("Comp: " + name))
         Object.entries(componentLibraryComponents).forEach(([name, component]) => app.component(name, component))
         return app
     })
