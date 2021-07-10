@@ -26,7 +26,6 @@ import accordionData from "@/assets/data/accordion.json"
 import boxUserData from '@/assets/data/box-user.json'
 import boxProductData from '@/assets/data/box-product.json'
 // import topHeaderNavigationData from "@/assets/data/top-header-navigation.json"
-import breadcrumbData from "@/assets/data/breadcrumbs.json"
 // import footerNavigationData from "@/assets/data/footer-navigation.json"
 import openingHoursData from "@/assets/data/opening-hours.json"
 import addressData from "@/assets/data/address.json"
@@ -36,7 +35,7 @@ import CmdSiteHeader from 'comand-component-library/src/components/CmdSiteHeader
 import CmdTopHeaderNavigation from 'comand-component-library/src/components/CmdTopHeaderNavigation'
 import CmdLogo from 'comand-component-library/src/components/CmdLogo'
 import CmdWidthLimitationWrapper from 'comand-component-library/src/components/CmdWidthLimitationWrapper'
-import CmdBreadcrumbs from 'comand-component-library/src/components/CmdBreadcrumbs'
+// import CmdBreadcrumbs from 'comand-component-library/src/components/CmdBreadcrumbs'
 import CmdSwitchLanguage from 'comand-component-library/src/components/CmdSwitchLanguage'
 import CmdFooterNavigation from 'comand-component-library/src/components/CmdFooterNavigation'
 import CmdOpeningHours from 'comand-component-library/src/components/CmdOpeningHours'
@@ -50,7 +49,6 @@ import store from "../store"
         accordionData,
         boxUserData,
         boxProductData,
-        breadcrumbData,
         // footerNavigationData,
         // topHeaderNavigationData,
         openingHoursData,
@@ -63,7 +61,7 @@ import store from "../store"
         CmdTopHeaderNavigation,
         CmdLogo,
         CmdWidthLimitationWrapper,
-        CmdBreadcrumbs,
+        // CmdBreadcrumbs,
         CmdSwitchLanguage,
         CmdFooterNavigation,
         CmdOpeningHours,

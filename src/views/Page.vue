@@ -1,7 +1,4 @@
 <template>
-  <CmdWidthLimitationWrapper inner-component="div">
-    <CmdBreadcrumbs :breadcrumbLinks="breadcrumbs" breadcrumbLabel="You are here:" />
-  </CmdWidthLimitationWrapper>
   <PageComponent :components="components" />
 </template>
 
