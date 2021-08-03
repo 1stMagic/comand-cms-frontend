@@ -1,0 +1,39 @@
+[
+    {
+        "tag": "h2",
+        "description": "Headline level 2"
+    },
+    {
+        "tag": "h3",
+        "description": "Headline level 3"
+    },
+    {
+        "tag": "h4",
+        "description": "Headline level 4"
+    },
+    {
+        "tag": "h5",
+        "description": "Headline level 5"
+    },
+    {
+        "tag": "h6",
+        "description": "Headline level 6"
+    },
+    {
+        "tag": "p",
+        "description": "Paragraph"
+    },
+    {
+        "tag": "ul",
+        "description": "Unordered list",
+        "mustContain": "li"
+    },
+    {
+        "tag": "ol",
+        "description": "Ordered list" ,
+        "mustContain": "li"
+    }
+]
+
+
+

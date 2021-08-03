@@ -29,6 +29,9 @@ import "@/assets/css/structure/cms-sitestructure.scss"
 /* import css for your custom styles */
 import "@/assets/css/layout/template.scss"
 
+/* import css for cms-editmode */
+import "@/assets/css/global/editmode.scss"
+
 import * as componentLibraryComponents from "comand-component-library"
 
 /* load cms-configuration */

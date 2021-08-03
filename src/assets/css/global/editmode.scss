@@ -1,0 +1,38 @@
+.add {
+  background: var(--success-color);
+  border-color: var(--success-color);
+
+  [class*="icon"] {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  &:hover, &:active, &:focus {
+    background: var(--pure-white);
+
+    span {
+      color: var(--success-color)
+    }
+  }
+}
+
+[class*="cmd-edit-mode-manage"] {
+  width: 30rem;
+  max-width: 30rem;
+
+  .button.add {
+    width: 100%;
+  }
+
+  h2 {
+    text-align: center;
+  }
+
+  h3:not(:first-of-type) {
+    margin-top: var(--default-margin);
+  }
+
+  hr {
+    margin: var(--default-margin);
+  }
+}
