@@ -1,6 +1,7 @@
 <template>
-  <div class="vue-container">
-    <CmdEditModeSiteConfig />
+  <div class="vue-container editmode">
+    <CmdSystemMessage v-show="systemMessage" :messageStatus="systemMessageStatus" :systemMessage="systemMessage" />
+    <CmdEditModeManageSite />
     <CmdSiteHeader :navigation-entries="[]" :languages="[]" :close-offcanvas="{}" :mainNavigationEntries="$store.state.site.mainNavigation" :sticky="true" @click="onNavigation">
       <template v-slot:top-header>
         <CmdTopHeaderNavigation :topHeaderNavigationData="topHeaderNavigationData" v-if="topHeaderNavigationData" />
@@ -33,7 +34,7 @@ import openingHoursData from "@/assets/data/opening-hours.json"
 // import addressData from "@/assets/data/address.json"
 
 // EditMode
-import CmdEditModeSiteConfig from "@/editmode/components/CmdEditModeSiteConfig"
+import CmdEditModeManageSite from "@/editmode/components/CmdEditModeManageSite"
 import CmdEditModeManageContent from "@/editmode/components/CmdEditModeManageContent"
 
 import CmdBackToTopButton from "comand-component-library/src/components/CmdBackToTopButton"
@@ -45,6 +46,7 @@ import CmdWidthLimitationWrapper from "comand-component-library/src/components/C
 import CmdSwitchLanguage from "comand-component-library/src/components/CmdSwitchLanguage"
 import CmdFooterNavigation from "comand-component-library/src/components/CmdFooterNavigation"
 import CmdOpeningHours from "comand-component-library/src/components/CmdOpeningHours"
+import CmdSystemMessage from "comand-component-library/src/components/CmdSystemMessage"
 import CmdAddressData from "comand-component-library/src/components/CmdAddressData"
 import axios from "axios"
 import store from "../store"
@@ -52,6 +54,8 @@ import store from "../store"
   export default {
     data() {
       return {
+        systemMessageStatus: "error",
+        systemMessage: "An error occurred",
         accordionData,
         boxUserData,
         boxProductData,
@@ -62,7 +66,7 @@ import store from "../store"
       }
     },
     components: {
-        CmdEditModeSiteConfig,
+        CmdEditModeManageSite,
         CmdEditModeManageContent,
         CmdBackToTopButton,
         CmdSiteHeader,
@@ -73,6 +77,7 @@ import store from "../store"
         CmdSwitchLanguage,
         CmdFooterNavigation,
         CmdOpeningHours,
+        CmdSystemMessage,
         CmdAddressData
     },
     computed: {
@@ -99,6 +104,11 @@ import store from "../store"
         topHeaderNavigationData() {
             let items = this.$store.state.site.topNavigation
             let mappedItems = []
+            mappedItems.push({
+                type: "href",
+                path: "#login",
+                linkName: "Login"
+            })
             for(let i = 0; i < items.length; i++) {
                 mappedItems.push({
                     type: "href",
@@ -152,6 +162,10 @@ import store from "../store"
                 return
             }
             event.preventDefault()
+            if(link.attributes.href.nodeValue === '#login') {
+                this.$store.commit('login', true)
+                return
+            }
             this.$router.push({
                 name: "Page",
                 params: {

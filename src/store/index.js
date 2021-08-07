@@ -4,7 +4,8 @@ export default createStore({
   state: {
     site: {},
     language: "de",
-    api: {}
+    api: {},
+    login: false
   },
   /* update states */
   mutations: {
@@ -16,6 +17,9 @@ export default createStore({
     },
     api(state, api) {
       state.api = api
+    },
+    login(state, loggedin) {
+      state.login = loggedin
     }
   },
   actions: {

@@ -1,6 +1,6 @@
 <template>
   <h3>Group</h3>
-  <CmdEditModeNavigationLevel :navigationEntries="topHeaderNavigation" />
+  <CmdEditModeGroupLevel />
   <hr />
 
   <button class="button add" @click="addEntry">
@@ -11,7 +11,7 @@
 
 <script>
   import axios from "axios"
-  import CmdEditModeNavigationLevel from "./CmdEditModeNavigationLevel"
+  import CmdEditModeGroupLevel from "./CmdEditModeGroupLevel"
 
   export default {
       data () {
@@ -22,7 +22,7 @@
           }
       },
       components: {
-          CmdEditModeNavigationLevel
+          CmdEditModeGroupLevel
       },
       created() {
           // call method and wait for resolved promise (from ajax-call) to assign response-data to data-property)

@@ -1,12 +1,27 @@
 <template>
-  <h3>Top-Header-Navigation</h3>
-  <CmdEditModeNavigationLevel :navigationEntries="topHeaderNavigation" />
+  <h4>Top-Header-Navigation</h4>
+  <CmdEditModeNavigationLevel
+          :navigationEntries="topHeaderNavigation"
+          @reload-navigation="reloadNavigation('top-navigation')"
+          @entry-selected="toggleEntrySelectedTopHeaderNavigation"
+          :entrySelected="entrySelectedTopHeaderNavigation"
+  />
   <hr />
-  <h3>Main-Navigation</h3>
-  <CmdEditModeNavigationLevel :navigationEntries="mainNavigation" @reloadNavigation="reloadNavigation('main-navigation')" />
+  <h4>Main-Navigation</h4>
+  <CmdEditModeNavigationLevel
+          :navigationEntries="mainNavigation"
+          @reload-navigation="reloadNavigation('main-navigation')"
+          @entry-selected="toggleEntrySelectedMainNavigation"
+          :entrySelected="entrySelectedMainNavigation"
+  />
   <hr />
-  <h3>Footer-Navigation</h3>
-  <CmdEditModeNavigationLevel :navigationEntries="footerNavigation" />
+  <h4>Footer-Navigation</h4>
+  <CmdEditModeNavigationLevel
+          :navigationEntries="footerNavigation"
+          @reload-navigation="reloadNavigation('footer-navigation')"
+          @entry-selected="toggleEntrySelectedFooterNavigation"
+          :entrySelected="entrySelectedFooterNavigation"
+  />
   <hr />
   <button class="button add" @click="addEntry">
     <span class="icon-plus"></span>
@@ -23,7 +38,11 @@
           return {
               topHeaderNavigation: [],
               mainNavigation: [],
-              footerNavigation: []
+              footerNavigation: [],
+              entrySelectedTopHeaderNavigation: false,
+              entrySelectedMainNavigation: false,
+              entrySelectedFooterNavigation: false
+
           }
       },
       components: {
@@ -36,6 +55,18 @@
           this.loadNavigationEntries('footer-navigation').then(responseData => this.footerNavigation = responseData)
       },
       methods: {
+          toggleEntrySelectedTopHeaderNavigation() {
+              this.entrySelectedMainNavigation = !this.entrySelectedMainNavigation
+              this.entrySelectedFooterNavigation = !this.entrySelectedFooterNavigation
+          },
+          toggleEntrySelectedMainNavigation() {
+              this.entrySelectedTopHeaderNavigation = !this.entrySelectedTopHeaderNavigation
+              this.entrySelectedFooterNavigation = !this.entrySelectedFooterNavigation
+          },
+          toggleEntrySelectedFooterNavigation() {
+              this.entrySelectedTopHeaderNavigation = !this.entrySelectedTopHeaderNavigation
+              this.entrySelectedMainNavigation = !this.entrySelectedMainNavigation
+          },
           loadNavigationEntries(path) {
               const url = new URL(`admin/pages/${this.$store.state.site.name}/${path}`, this.$store.state.site.api.baseUrl)
               return axios.get(url.href, {headers: {"Accept-Language": this.$store.state.language}})
@@ -43,7 +74,16 @@
                   .catch(error => console.error(error))
           },
           reloadNavigation(navigationName) {
-              this.loadNavigationEntries(navigationName).then(responseData => this.mainNavigation = responseData)
+              this.loadNavigationEntries(navigationName).then(responseData => {
+                  if(navigationName === 'top-navigation') {
+                      this.topNavigation = responseData
+                  } else if(navigationName === 'main-navigation') {
+                      this.mainNavigation = responseData
+                  } else if(navigationName === 'footer-navigation') {
+                      this.footerNavigation = responseData
+                  }
+                }
+              )
           },
           addEntry() {
               alert("Add new entry!")
