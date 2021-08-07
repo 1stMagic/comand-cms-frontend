@@ -17,7 +17,7 @@
       <CmdSwitchLanguage :languages="languagesData" />
       <CmdFooterNavigation :footerNavigation="footerNavigationData" headline="Links" />
       <CmdOpeningHours :openingHours="openingHoursData" :closed="true" headline="Opening hours" textOpenClosed="Closed right now!" textHolidaysClosed="Closed on holidays" textMiscInfo="Miscellaneous information" />
-      <CmdAddressData :addressData="$store.state.site.contactData" :linkGoogleMaps="true" headline="Contact" />
+      <CmdAddressData :addressData="$store.state.site.contactData" headline="Contact" />
     </CmdWidthLimitationWrapper>
     <CmdBackToTopButton tooltip="Back to top" />
     <CmdEditModeManageContent />
