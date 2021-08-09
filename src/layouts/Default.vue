@@ -1,6 +1,6 @@
 <template>
   <div class="vue-container editmode">
-    <CmdSystemMessage v-show="systemMessage" :messageStatus="systemMessageStatus" :systemMessage="systemMessage" />
+    <CmdSystemMessage v-show="systemMessage" :messageStatus="$store.state.systemMessage.status" :systemMessage="$store.state.systemMessage.systemMessage " />
     <CmdEditModeManageSite />
     <CmdSiteHeader :navigation-entries="[]" :languages="[]" :close-offcanvas="{}" :mainNavigationEntries="$store.state.site.mainNavigation" :sticky="true" @click="onNavigation">
       <template v-slot:top-header>
@@ -20,7 +20,7 @@
       <CmdAddressData :addressData="$store.state.site.contactData" headline="Contact" />
     </CmdWidthLimitationWrapper>
     <CmdBackToTopButton tooltip="Back to top" />
-    <CmdEditModeManageContent />
+    <CmdEditModeManageContents />
   </div>
 </template>
 
@@ -34,8 +34,8 @@ import openingHoursData from "@/assets/data/opening-hours.json"
 // import addressData from "@/assets/data/address.json"
 
 // EditMode
-import CmdEditModeManageSite from "@/editmode/components/CmdEditModeManageSite"
-import CmdEditModeManageContent from "@/editmode/components/CmdEditModeManageContent"
+import CmdEditModeManageSite from "@/editmode/components/ManageSite/CmdEditModeManageSite"
+import CmdEditModeManageContents from "@/editmode/components/ManageContents/CmdEditModeManageContents"
 
 import CmdBackToTopButton from "comand-component-library/src/components/CmdBackToTopButton"
 import CmdSiteHeader from "comand-component-library/src/components/CmdSiteHeader"
@@ -67,7 +67,7 @@ import store from "../store"
     },
     components: {
         CmdEditModeManageSite,
-        CmdEditModeManageContent,
+        CmdEditModeManageContents,
         CmdBackToTopButton,
         CmdSiteHeader,
         CmdTopHeaderNavigation,

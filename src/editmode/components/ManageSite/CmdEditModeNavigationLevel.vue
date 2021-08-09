@@ -8,12 +8,17 @@
            :class="{'has-subentries' : (navigationEntry.children && navigationEntry.children.length)}"
            :title="(navigationEntry.children && navigationEntry.children.length) ? 'Open page (and toggle subentries)' : 'Open page'">
           <span v-if="navigationEntry.children && navigationEntry.children.length" class="icon-single-arrow-right"></span>
-          <span>{{ navigationEntry.title }}</span>
+          <span :title="navigationEntry.title">{{ navigationEntry.title }}</span>
         </a>
         <ul class="icon-wrapper" aria-expanded="true">
           <li>
             <a href="#" @click.prevent="editNavigation('addEntry', navigationEntry.title, navigationEntry.id)" title="Add new entry below this one">
               <span class="icon-plus add"></span>
+            </a>
+          </li>
+          <li>
+            <a href="#" @click.prevent="editNavigation('addSubEntry', navigationEntry.title, navigationEntry.id)" title="Add new entry on sublevel">
+              <span class="icon-arrow-right add"></span>
             </a>
           </li>
           <li class="status">
@@ -76,7 +81,7 @@
                 }
             },
             deleteContent(pageId, title) {
-                if(!confirm("Die Seite " + title + " inkl. des Inhalts endgültig löschen?")) {
+                if(!confirm("Delete entry " + title + " (incl. content) completely?")) {
                   return
                 }
                 const url = new URL(`admin/pages/${this.$store.state.site.name}/${pageId}`, this.$store.state.site.api.baseUrl)
@@ -84,8 +89,12 @@
                     .then(response => response.data) // get data (from backend) from (http) response
                     .then(backendResponse => {
                         if(backendResponse.success) {
+                            this.$store.state.systemMessage.status="success"
+                            this.$store.state.systemMessage.systemMessage="The content was deleted successfully!"
                             this.$emit("reload-navigation")
                         } else {
+                            this.$store.state.systemMessage.status="error"
+                            this.$store.state.systemMessage.systemMessage="The content could not be deleted!"
                             throw new Error(backendResponse.messages)
                         }
                     })
@@ -97,6 +106,8 @@
                 .then(response => response.data) // get data (from backend) from (http) response
                 .then(backendResponse => {
                     if(backendResponse.success) {
+                        this.$store.state.systemMessage.status="success"
+                        this.$store.state.systemMessage.systemMessage="The content was duplicated successfully!"
                         this.$emit("reloadNavigation")
                     } else {
                         throw new Error(backendResponse.messages)
@@ -110,8 +121,16 @@
                 .then(response => response.data) // get data (from backend) from (http) response
                 .then(backendResponse => {
                     if(backendResponse.success) {
+                        this.$store.state.systemMessage.status="success"
+                        if(active) {
+                            this.$store.state.systemMessage.systemMessage = "The content was activated successfully!"
+                        } else {
+                            this.$store.state.systemMessage.systemMessage = "The content was deactivated successfully!"
+                        }
                         this.$emit("reloadNavigation")
                     } else {
+                        this.$store.state.systemMessage.status="error"
+                        this.$store.state.systemMessage.systemMessage="The content could not be duplicated!"
                         throw new Error(backendResponse.messages)
                     }
                 })

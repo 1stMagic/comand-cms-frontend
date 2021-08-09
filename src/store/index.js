@@ -5,7 +5,11 @@ export default createStore({
     site: {},
     language: "de",
     api: {},
-    login: false
+    login: false,
+    systemMessage: {
+      status: "error",
+      systemMessage: "text"
+    }
   },
   /* update states */
   mutations: {
@@ -20,6 +24,10 @@ export default createStore({
     },
     login(state, loggedin) {
       state.login = loggedin
+    },
+    systemMessage(state, status, message) {
+      state.systemMessage.status = status
+      state.systemMessage.systemMessage = message
     }
   },
   actions: {

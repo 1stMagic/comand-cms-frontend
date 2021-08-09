@@ -9,7 +9,7 @@
           </h3>
         </template>
         <template v-slot:accordionContent0>
-          <CmdEditModeNavigationConfig/>
+          <CmdEditModeManageNavigation />
         </template>
       </CmdAccordion>
       <CmdAccordion :accordionData="1">
@@ -19,26 +19,56 @@
           </h3>
         </template>
         <template v-slot:accordionContent0>
-          <CmdEditModeUserGroupsConfig/>
+          <CmdEditModeManageUserGroups />
+        </template>
+      </CmdAccordion>
+      <CmdAccordion :accordionData="1">
+        <template v-slot:accordionHeadline0>
+          <h3>
+            <span class="icon-download"></span><span>Backups</span>
+          </h3>
+        </template>
+        <template v-slot:accordionContent0>
+          <CmdEditModeManageBackups />
+        </template>
+      </CmdAccordion>
+      <CmdAccordion :accordionData="1">
+        <template v-slot:accordionHeadline0>
+          <h3>
+            <span class="icon-globe"></span><span>Localization</span>
+          </h3>
+        </template>
+        <template v-slot:accordionContent0>
+          <CmdEditModeManageLocalization />
+        </template>
+      </CmdAccordion>
+      <CmdAccordion :accordionData="1">
+        <template v-slot:accordionHeadline0>
+          <h3>
+            <span class="icon-google-analytics"></span><span>Google&trade; Tools</span>
+          </h3>
+        </template>
+        <template v-slot:accordionContent0>
+          <CmdEditModeManageGoogleTools />
         </template>
       </CmdAccordion>
       <ul>
         <li>
           <a href="#">
             <span class="icon-help"></span>
-            <span>CoManD-Hilfe</span>
+            <span>CoManD-Help</span>
           </a>
         </li>
         <li>
           <a href="#">
             <span class="icon-euro"></span>
-            <span>Spenden</span>
+            <span>Donate</span>
           </a>
         </li>
         <li>
           <a v-if="$store.state.login" href="#" @click.prevent="$store.commit('login', false)">
             <span class="icon-logout"></span>
-            <span>{{ username }} abmelden</span>
+            <span>Logout {{ username }}</span>
           </a>
         </li>
       </ul>
@@ -55,8 +85,11 @@
 
 <script>
     // import EditMode-components
-    import CmdEditModeNavigationConfig from "@/editmode/components/CmdEditModeNavigationConfig"
-    import CmdEditModeUserGroupsConfig from "@/editmode/components/CmdEditModeUserGroupsConfig"
+    import CmdEditModeManageNavigation from "@/editmode/components/ManageSite/CmdEditModeManageNavigation"
+    import CmdEditModeManageUserGroups from "@/editmode/components/ManageSite/CmdEditModeManageUserGroups"
+    import CmdEditModeManageBackups from "@/editmode/components/ManageSite/CmdEditModeManageBackups"
+    import CmdEditModeManageGoogleTools from "@/editmode/components/ManageSite/CmdEditModeManageGoogleTools"
+    import CmdEditModeManageLocalization from "@/editmode/components/ManageSite/CmdEditModeManageLocalization"
 
     // import Cmd-components
     import CmdAccordion from "comand-component-library/src/components/CmdAccordion"
@@ -70,8 +103,11 @@
           }
         },
         components: {
-            CmdEditModeNavigationConfig,
-            CmdEditModeUserGroupsConfig,
+            CmdEditModeManageNavigation,
+            CmdEditModeManageUserGroups,
+            CmdEditModeManageBackups,
+            CmdEditModeManageGoogleTools,
+            CmdEditModeManageLocalization,
             CmdAccordion
         },
         methods: {

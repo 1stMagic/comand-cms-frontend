@@ -22,11 +22,6 @@
           @entry-selected="toggleEntrySelectedFooterNavigation"
           :entrySelected="entrySelectedFooterNavigation"
   />
-  <hr />
-  <button class="button add" @click="addEntry">
-    <span class="icon-plus"></span>
-    <span>Add new entry</span>
-  </button>
 </template>
 
 <script>
@@ -84,9 +79,6 @@
                   }
                 }
               )
-          },
-          addEntry() {
-              alert("Add new entry!")
           }
       }
   }

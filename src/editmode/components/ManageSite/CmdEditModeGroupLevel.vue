@@ -1,5 +1,5 @@
 <template>
-  <ul class="cmd-edit-mode-navigation-level">
+  <ul class="cmd-edit-mode-group-level">
     <li v-for="(userGroupEntry, index) in userGroupsData" :key="index" :class="{open : showSubLevel[index] && userGroupEntry.children && userGroupEntry.children.length}">
       <div :class="[status ? 'active' : 'inactive', {'selected' : selected === index}]">
         <a href="#"
@@ -88,6 +88,8 @@
                 .then(response => response.data) // get data (from backend) from (http) response
                 .then(backendResponse => {
                     if(backendResponse.success) {
+                        this.$store.state.systemMessage.status = "success"
+                        this.$store.state.systemMessage.systemMessage = "The content was duplicated!"
                         this.$emit("reloadNavigation")
                     } else {
                         throw new Error(backendResponse.messages)

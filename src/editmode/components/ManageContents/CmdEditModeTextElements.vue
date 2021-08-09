@@ -1,5 +1,5 @@
 <template>
-  <div class="cmd-edit-mode-manage-content-typo">
+  <div class="cmd-edit-mode-manage-text-elements">
     <ul>
       <li v-for="(textElement, index) in textElementsData" :key="index">
         <a href="">
@@ -15,7 +15,7 @@
 import textElementsData from "@/assets/data/editmode/text-elements.json"
 
 export default {
-    name: "CmdEditModeContentTypo",
+    name: "CmdEditModeTextElements",
     data() {
         return {
             textElementsData
@@ -25,7 +25,7 @@ export default {
 </script>
 
 <style lang="scss">
-.cmd-edit-mode-manage-content-typo {
+.cmd-edit-mode-manage-text-elements {
   ul {
     display: flex;
     gap: var(--default-gap);

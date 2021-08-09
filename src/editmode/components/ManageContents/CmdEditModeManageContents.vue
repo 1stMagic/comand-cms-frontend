@@ -5,7 +5,7 @@
       <span v-else class="icon-single-arrow-left"></span>
     </a>
     <div>
-      <h2>Manage content</h2>
+      <h2>Manage contents</h2>
       <CmdAccordion :accordionData="1">
         <template v-slot:accordionHeadline0>
           <h3>
@@ -25,7 +25,7 @@
           </h3>
         </template>
         <template v-slot:accordionContent0>
-          <CmdEditModeContentTypo />
+          <CmdEditModeTextElements />
         </template>
       </CmdAccordion>
       <CmdAccordion :accordionData="1">
@@ -36,7 +36,7 @@
           </h3>
         </template>
         <template v-slot:accordionContent0>
-          <CmdEditModeContentTypo />
+          <CmdEditModeTextElements />
         </template>
       </CmdAccordion>
       <CmdAccordion :accordionData="1">
@@ -47,7 +47,29 @@
           </h3>
         </template>
         <template v-slot:accordionContent0>
-          <CmdEditModeContentTypo />
+          <CmdEditModeTextElements />
+        </template>
+      </CmdAccordion>
+      <CmdAccordion :accordionData="1">
+        <template v-slot:accordionHeadline0>
+          <h3>
+            <span class="icon-visible"></span>
+            <span>Page visibility</span>
+          </h3>
+        </template>
+        <template v-slot:accordionContent0>
+          <CmdEditModePageVisibility />
+        </template>
+      </CmdAccordion>
+      <CmdAccordion :accordionData="1">
+        <template v-slot:accordionHeadline0>
+          <h3>
+            <span class="icon-content"></span>
+            <span>Page information</span>
+          </h3>
+        </template>
+        <template v-slot:accordionContent0>
+          <CmdEditModePageInformation />
         </template>
       </CmdAccordion>
     </div>
@@ -56,8 +78,10 @@
 
 <script>
 // import EditMode-components
-import CmdEditModeMeta from "@/editmode/components/CmdEditModeMeta"
-import CmdEditModeContentTypo from "@/editmode/components/CmdEditModeContentTypo"
+import CmdEditModeMeta from "@/editmode/components/ManageContents/CmdEditModeMeta"
+import CmdEditModeTextElements from "@/editmode/components/ManageContents/CmdEditModeTextElements"
+import CmdEditModePageVisibility from "@/editmode/components/ManageContents/CmdEditModePageVisibility"
+import CmdEditModePageInformation from "@/editmode/components/ManageContents/CmdEditModePageInformation"
 
 // import Cmd-components
 import CmdAccordion from "comand-component-library/src/components/CmdAccordion"
@@ -70,8 +94,10 @@ export default {
         }
     },
     components: {
-        CmdEditModeContentTypo,
+        CmdEditModeTextElements,
         CmdEditModeMeta,
+        CmdEditModePageVisibility,
+        CmdEditModePageInformation,
         CmdAccordion
     },
     methods: {

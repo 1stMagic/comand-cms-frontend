@@ -1,0 +1,20 @@
+[
+  {
+    "id": "id1",
+    "name": "Backup 1",
+    "date": "09.08.2021",
+    "url": "/backups/backup-2021-08-09.zip"
+  },
+  {
+    "id": "id2",
+    "name": "Backup 2",
+    "date": "08.08.2021",
+    "url": "/backups/backup-2021-08-08.zip"
+  },
+  {
+    "id": "id3",
+    "name": "Backup 3",
+    "date": "07.08.2021",
+    "url": "/backups/backup-2021-08-07.zip"
+  }
+]
