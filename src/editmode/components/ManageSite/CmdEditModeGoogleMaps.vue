@@ -1,9 +1,11 @@
 <template>
-  <h3>Google Maps&trade;</h3>
+  <h4>Google Maps&trade;</h4>
   <fieldset class="flex-container">
-    <CmdFormElement element="input" type="checkbox" labelText="Activate" v-model="activated" />
-    <CmdFormElement element="input" type="checkbox" labelText="Link all addresses with Google Maps&trade;" />
-    <CmdFormElement element="input" type="checkbox" labelText="Enable Google Maps&trade; as component" />
+    <CmdSwitchButton type="checkbox" id="google-maps-activated" :colored="true" onLabel="Activate" offLabel="Deactivate" @input="activated = !activated" />
+    <template v-if="activated">
+      <CmdFormElement element="input" type="checkbox" labelText="Link all addresses with Google Maps&trade;" />
+      <CmdFormElement element="input" type="checkbox" labelText="Enable Google Maps&trade; as component" />
+    </template>
   </fieldset>
 </template>
 
@@ -11,11 +13,18 @@
   // import axios from "axios"
 
   import CmdFormElement from "comand-component-library/src/components/CmdFormElement"
+  import CmdSwitchButton from "comand-component-library/src/components/CmdSwitchButton";
 
   export default {
       name: "CmdEditModeMGoogleMaps",
+      data() {
+          return {
+              activated: false
+          }
+      },
       components: {
-          CmdFormElement
+          CmdFormElement,
+          CmdSwitchButton
       }
   }
 </script>

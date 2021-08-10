@@ -3,11 +3,13 @@ import router from "./router"
 import store from "./store"
 import axios from "axios"
 
-/* import css from comand-frontend-framework */
+/* begin import css from comand-frontend-framework */
 import "comand-frontend-framework/src/assets/css/normalize.css"
 import "comand-frontend-framework/src/assets/css/framework.css"
 import "comand-frontend-framework/src/assets/css/framework-iconfont.css"
+/* end import css from comand-frontend-framework */
 
+/* begin import css from comand-component-library */
 /* import additional iconfont containing company-logos */
 import "comand-component-library/src/assets/styles/logos-iconfont.css"
 
@@ -22,6 +24,11 @@ import "comand-component-library/src/assets/styles/comand-component-library-layo
 
 /* import css for global transitions */
 import 'comand-component-library/src/assets/styles/transitions.scss'
+/* end import css from comand-component-library */
+
+/* begin import css from comand-cms */
+/* import css for cms-sitestructure */
+import "@/assets/css/structure/cms-sitestructure.scss"
 
 /* import css for cms-sitestructure */
 import "@/assets/css/structure/cms-sitestructure.scss"
@@ -31,6 +38,7 @@ import "@/assets/css/layout/template.scss"
 
 /* import css for cms-editmode */
 import "@/assets/css/global/editmode.scss"
+/* end import css from comand-cms */
 
 import * as componentLibraryComponents from "comand-component-library"
 

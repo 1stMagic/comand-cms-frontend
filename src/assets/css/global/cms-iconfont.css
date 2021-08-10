@@ -1,0 +1,185 @@
+@font-face {
+  font-family: 'icomoon';
+  src: url('../../fonts/iconfonts/cms-iconfont/icomoon.woff?6sq8uv') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-add-image:before {
+  content: "\c100";
+}
+.icon-add-images:before {
+  content: "\c101";
+}
+.icon-add-user:before {
+  content: "\c102";
+}
+.icon-contentpage:before {
+  content: "\c103";
+}
+.icon-create:before {
+  content: "\c104";
+}
+.icon-create-box:before {
+  content: "\c105";
+}
+.icon-create-content:before {
+  content: "\c106";
+}
+.icon-create-content-sub-level:before {
+  content: "\c107";
+}
+.icon-create-modulepage:before {
+  content: "\c108";
+}
+.icon-create-modules:before {
+  content: "\c109";
+}
+.icon-create-navigation-entry:before {
+  content: "\c10a";
+}
+.icon-create-newspage:before {
+  content: "\c10b";
+}
+.icon-create-translation:before {
+  content: "\c10c";
+}
+.icon-create-user:before {
+  content: "\c10d";
+}
+.icon-create-user-group:before {
+  content: "\c10e";
+}
+.icon-delete-image:before {
+  content: "\c10f";
+}
+.icon-dependencies:before {
+  content: "\c110";
+}
+.icon-edit-box:before {
+  content: "\c111";
+}
+.icon-edit-content:before {
+  content: "\c112";
+}
+.icon-edit-contents:before {
+  content: "\c113";
+}
+.icon-edit-images:before {
+  content: "\c114";
+}
+.icon-edit-language:before {
+  content: "\c115";
+}
+.icon-edit-modulepage:before {
+  content: "\c116";
+}
+.icon-edit-modules:before {
+  content: "\c117";
+}
+.icon-edit-navigation-entry:before {
+  content: "\c118";
+}
+.icon-edit-newspage:before {
+  content: "\c11a";
+}
+.icon-edit-slideshowimages:before {
+  content: "\c11b";
+}
+.icon-edit-translations:before {
+  content: "\c11c";
+}
+.icon-edit-user:before {
+  content: "\c11e";
+}
+.icon-edit-user-groups:before {
+  content: "\e11d";
+}
+.icon-edit-users:before {
+  content: "\e11e";
+}
+.icon-folder-add:before {
+  content: "\e11f";
+}
+.icon-folder-delete:before {
+  content: "\e120";
+}
+.icon-folder-rename:before {
+  content: "\e121";
+}
+.icon-grid:before {
+  content: "\e122";
+}
+.icon-iconfont:before {
+  content: "\e123";
+}
+.icon-link-content:before {
+  content: "\e926";
+}
+.icon-link-file:before {
+  content: "\e927";
+}
+.icon-link-website:before {
+  content: "\e928";
+}
+.icon-manage-design-templates:before {
+  content: "\e929";
+}
+.icon-manage-files:before {
+  content: "\e124";
+}
+.icon-manage-languages:before {
+  content: "\e125";
+}
+.icon-manage-modules:before {
+  content: "\e126";
+}
+.icon-manage-slideshow-images:before {
+  content: "\e127";
+}
+.icon-manage-system:before {
+  content: "\e128";
+}
+.icon-mediacenter:before {
+  content: "\e129";
+}
+.icon-module:before {
+  content: "\e12a";
+}
+.icon-modulepage:before {
+  content: "\e12b";
+}
+.icon-navigation-entry:before {
+  content: "\e12c";
+}
+.icon-newspage:before {
+  content: "\e12d";
+}
+.icon-replace-image:before {
+  content: "\e12e";
+}
+.icon-show-image:before {
+  content: "\e12f";
+}
+.icon-text:before {
+  content: "\e130";
+}
+.icon-time-currency-settings:before {
+  content: "\e131";
+}

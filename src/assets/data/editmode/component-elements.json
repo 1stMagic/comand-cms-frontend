@@ -1,0 +1,84 @@
+[
+    {
+        "iconClass": "icon-cogs",
+        "description": "Accordion",
+        "component": "CmdAccordion",
+        "allowDropIn": [ "main", "CmdWidthLimitationWrapper", "CmdAccordion", "CmdTabs" ]
+    },
+    {
+        "iconClass": "icon-cogs",
+        "description": "Address Data",
+        "component": "CmdAddressData",
+        "allowDropIn": ["main", "footer", "CmdWidthLimitationWrapper"]
+    },
+    {
+        "iconClass": "icon-cogs",
+        "description": "Box",
+        "component": "CmdBox",
+        "allowDropIn": ["main", "footer", "CmdWidthLimitationWrapper", "CmdAccordion", "CmdTabs"]
+    },
+    {
+        "iconClass": "icon-cogs",
+        "description": "Breadcrumbs",
+        "component": "CmdBreadcrumbs",
+        "allowDropIn": ["main", "CmdWidthLimitationWrapper"]
+    },
+
+    {
+        "iconClass": "icon-cogs",
+        "description": "Google Maps",
+        "component": "CmdGoogleMaps",
+        "allowDropIn": ["main", "CmdWidthLimitationWrapper", "CmdAccordion", "CmdTabs", "CmdBox"]
+    },
+    {
+        "iconClass": "icon-cogs",
+        "description": "Image Gallery",
+        "component": "CmdImageGallery",
+        "allowDropIn": ["main", "CmdWidthLimitationWrapper"]
+    },
+    {
+        "iconClass": "icon-cogs",
+        "description": "Image Zoom",
+        "component": "CmdImageZoom",
+        "allowDropIn": ["main", "CmdWidthLimitationWrapper"]
+    },
+    {
+        "iconClass": "icon-cogs",
+        "description": "Opening Hours",
+        "component": "CmdOpeningHours",
+        "allowDropIn": ["main", "footer", "CmdWidthLimitationWrapper", "CmdAccordion", "CmdTabs", "CmdBox"]
+    },
+    {
+        "iconClass": "icon-cogs",
+        "description": "Section",
+        "component": "CmdWidthLimitationWrapper",
+        "allowDropIn": ["main"]
+    },
+    {
+        "iconClass": "icon-cogs",
+        "description": "Slideshow",
+        "component": "CmdSlideshow",
+        "allowDropIn": ["main", "CmdWidthLimitationWrapper"]
+    },
+    {
+        "iconClass": "icon-cogs",
+        "description": "Table",
+        "component": "CmdTable",
+        "allowDropIn": ["main", "CmdWidthLimitationWrapper", "CmdAccordion", "CmdTabs", "CmdBox"]
+    },
+    {
+        "iconClass": "icon-cogs",
+        "description": "Thumbnail Scroller",
+        "component": "CmdThumbnailScroller",
+        "allowDropIn": ["main", "CmdWidthLimitationWrapper"]
+    },
+    {
+        "iconClass": "icon-cogs",
+        "description": "Upload Form",
+        "component": "CmdUploadForm",
+        "allowDropIn": ["main", "CmdWidthLimitationWrapper", "CmdAccordion", "CmdTabs", "CmdBox"]
+    }
+]
+
+
+

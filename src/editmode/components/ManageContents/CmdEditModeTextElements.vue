@@ -1,5 +1,6 @@
 <template>
-  <div class="cmd-edit-mode-manage-text-elements">
+  <div class="cmd-edit-mode-text-elements">
+    <h4>Text-Elements</h4>
     <ul>
       <li v-for="(textElement, index) in textElementsData" :key="index">
         <a href="">
@@ -25,28 +26,5 @@ export default {
 </script>
 
 <style lang="scss">
-.cmd-edit-mode-manage-text-elements {
-  ul {
-    display: flex;
-    gap: var(--default-gap);
-    flex-wrap: wrap;
 
-    li {
-      list-style-type: none;
-      margin: 0;
-
-      a {
-        border: var(--default-border);
-        display: block;
-        padding: var(--default-padding);
-
-        span {
-          display: block;
-          margin: 0 auto;
-          text-align: center;
-        }
-      }
-    }
-  }
-}
 </style>

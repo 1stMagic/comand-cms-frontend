@@ -14,10 +14,10 @@
           <img src="" :alt="language.iso2" :title="language.name" />
         </td>
         <td>
-          <CmdFormElement element="input" type="checkbox" :id="'active-' + language.iso2" :labelText="'Activate ' + language.name" :hideLabelText="true" />
+          <CmdSwitchButton type="checkbox" :id="'language-' + language.iso2" :colored="true" onLabel="On" offLabel="off" />
         </td>
         <td>
-          <CmdFormElement element="input" type="radio" name="master-language" :id="'master-' + language.iso2" :labelText="'Activate ' + language.name" :hideLabelText="true" />
+          <CmdSwitchButton type="radio" :id="'master-' + language.iso2" name="master-language"  :colored="true" onLabel="Master" offLabel="No master" />
         </td>
       </tr>
     </tbody>
@@ -29,7 +29,7 @@
 
   // import axios from "axios"
 
-  import CmdFormElement from "comand-component-library/src/components/CmdFormElement"
+  import CmdSwitchButton from "comand-component-library/src/components/CmdSwitchButton"
 
   export default {
       name: "CmdEditModeManageLanguages",
@@ -40,7 +40,7 @@
           }
       },
       components: {
-          CmdFormElement
+          CmdSwitchButton
       }
   }
 </script>

@@ -1,6 +1,5 @@
 .editmode {
   > .system-message {
-
     position: fixed;
     top: 0;
     z-index: 1000;
@@ -52,6 +51,10 @@
         .accordion-content {
           max-height: 50vh;
           overflow-y: auto;
+
+          h4 {
+            font-size: 1.6rem;
+          }
         }
       }
 
@@ -91,12 +94,19 @@
       }
 
       .accordion-content {
+        fieldset {
+          padding: var(--default-padding);
+
+          input[type="number"], input[type="date"] {
+            max-width: none;
+          }
+        }
+
         > ul {
           display: flex;
           flex-direction: column;
 
           > li {
-
             & > div {
               display: flex;
               align-items: center;
@@ -104,6 +114,8 @@
               padding: calc(var(--default-padding) / 2);
 
               > a {
+                display: flex;
+                align-items: center;
                 flex: 1;
                 max-width: 50%;
 
@@ -316,6 +328,7 @@
 
     h2 {
       text-align: center;
+      font-size: 1.8rem;
     }
 
     h3:not(:first-of-type) {
@@ -324,6 +337,31 @@
 
     hr {
       margin: var(--default-margin);
+    }
+
+    .manage-content-elements {
+      ul {
+        display: flex;
+        gap: var(--default-gap);
+        flex-wrap: wrap;
+
+        li {
+          list-style-type: none;
+          margin: 0;
+
+          a {
+            border: var(--default-border);
+            display: block;
+            padding: var(--default-padding);
+
+            span {
+              display: block;
+              margin: 0 auto;
+              text-align: center;
+            }
+          }
+        }
+      }
     }
   }
 

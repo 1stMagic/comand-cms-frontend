@@ -1,8 +1,8 @@
 <template>
-  <h3>Google Analytics&trade;</h3>
+  <h4>Google Analytics&trade;</h4>
   <fieldset class="flex-container">
-    <CmdFormElement element="input" type="checkbox" labelText="Activate" />
-    <CmdFormElement element="textarea" labelText="Script:" placeholder="Enter script (without <script>-tag)" />
+    <CmdSwitchButton type="checkbox" id="google-analytics-activated" :colored="true" onLabel="Activate" offLabel="Deactivate" @input="activated = !activated" />
+    <CmdFormElement v-if="activated" element="textarea" labelText="Script:" placeholder="Enter script (without <script>-tag)" />
   </fieldset>
 </template>
 
@@ -10,11 +10,18 @@
   // import axios from "axios"
 
   import CmdFormElement from "comand-component-library/src/components/CmdFormElement"
+  import CmdSwitchButton from "comand-component-library/src/components/CmdSwitchButton";
 
   export default {
-      name: "CmdEditModeManageGoogleTools",
+      name: "CmdEditModeGoogleAnalytics",
+      data() {
+          return {
+              activated: false
+          }
+      },
       components: {
-          CmdFormElement
+          CmdFormElement,
+          CmdSwitchButton
       }
   }
 </script>

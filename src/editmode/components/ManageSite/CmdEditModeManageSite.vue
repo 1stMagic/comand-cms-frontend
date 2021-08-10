@@ -66,9 +66,13 @@
           </a>
         </li>
         <li>
-          <a v-if="$store.state.login" href="#" @click.prevent="$store.commit('login', false)">
+          <a href="#" @click.prevent="$store.commit('login', false)" :title="'Logout ' + username">
             <span class="icon-logout"></span>
-            <span>Logout {{ username }}</span>
+            <div class="flex-container no-flex">
+              <span class="icon-user-profile"></span>
+              <span>{{ username }}</span>
+            </div>
+
           </a>
         </li>
       </ul>
