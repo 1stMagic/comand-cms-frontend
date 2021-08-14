@@ -1,7 +1,11 @@
 <template>
   <ul class="cmd-edit-mode-navigation-level">
     <li v-for="(navigationEntry, index) in navigationEntries" :key="index" :class="{open : showSubLevel[index] && navigationEntry.children && navigationEntry.children.length}">
-      <div :class="[navigationEntry.active ? 'active' : 'inactive', {'selected' : selected === index}]">
+      <template v-if="navigationEntry.id === newNavEntryId" >
+        <input type="text" v-model="newNavigationEntry" />
+        <button type="button" class="button" title="Save entry" @click="updatePageTitle"><span class="icon-check"></span></button>
+      </template>
+      <div v-else :class="[navigationEntry.active ? 'active' : 'inactive', {'selected' : selected === index}]">
         <a href="#"
            @click.prevent="loadComponentConfig(index)"
            :target="navigationEntry.href"
@@ -44,7 +48,7 @@
 </template>
 
 <script>
-    import axios from "axios"
+    import {CmsBackendClient} from "../../../client/CmsClient"
 
     export default {
         name: "CmdEditModeNavigationLevel",
@@ -52,7 +56,9 @@
             return {
                 showSubLevel: {},
                 status: false,
-                selected: -1
+                selected: -1,
+                newNavEntryId: "",
+                newNavigationEntry: ""
             }
         },
         props: {
@@ -72,7 +78,11 @@
                this.$emit('entry-selected')
             },
             editNavigation (action, title, pageId, active) {
-                if(action === "delete") {
+                if (action === "addEntry") {
+                    this.addEntry("New page", pageId)
+                } else if (action === "addSubEntry") {
+                    this.addSubEntry("New sub-page", pageId)
+                } else if(action === "delete") {
                     this.deleteContent(pageId, title)
                 } else if (action === "duplicate") {
                   this.duplicateContent(pageId)
@@ -80,60 +90,103 @@
                     this.toggleStatus(pageId, active)
                 }
             },
+            addEntry(title, afterPageId) {
+                const method = (type => {
+                    if (type === "top-navigation") return "createTopNavigationPage"
+                    if (type === "footer-navigation") return "createFooterNavigationPage"
+                    return "createMainNavigationPage"
+                })(this.type)
+                new CmsBackendClient()[method](title, afterPageId)
+                    .then(response => {
+                        this.$store.state.systemMessage.status="success"
+                        this.$store.state.systemMessage.systemMessage="The new page was successfully created!"
+                        this.$emit("reload-navigation")
+                        this.newNavEntryId = response.id
+                    })
+                    .catch(error => {
+                        this.$store.state.systemMessage.status="error"
+                        this.$store.state.systemMessage.systemMessage="The new page could not be created!"
+                        console.error(error)
+                    })
+            },
+            addSubEntry(title, parentId) {
+                const method = (type => {
+                    if (type === "top-navigation") return "createTopNavigationPage"
+                    if (type === "footer-navigation") return "createFooterNavigationPage"
+                    return "createMainNavigationPage"
+                })(this.type)
+                new CmsBackendClient()[method](title, null, parentId)
+                    .then(() => {
+                        this.$store.state.systemMessage.status="success"
+                        this.$store.state.systemMessage.systemMessage="The new page was successfully created!"
+                        this.$emit("reload-navigation")
+                    })
+                    .catch(error => {
+                        this.$store.state.systemMessage.status="error"
+                        this.$store.state.systemMessage.systemMessage="The new page could not be created!"
+                        console.error(error)
+                    })
+            },
             deleteContent(pageId, title) {
                 if(!confirm("Delete entry " + title + " (incl. content) completely?")) {
                   return
                 }
-                const url = new URL(`admin/pages/${this.$store.state.site.name}/${pageId}`, this.$store.state.site.api.baseUrl)
-                return axios.delete(url.href)
-                    .then(response => response.data) // get data (from backend) from (http) response
-                    .then(backendResponse => {
-                        if(backendResponse.success) {
-                            this.$store.state.systemMessage.status="success"
-                            this.$store.state.systemMessage.systemMessage="The content was deleted successfully!"
-                            this.$emit("reload-navigation")
-                        } else {
-                            this.$store.state.systemMessage.status="error"
-                            this.$store.state.systemMessage.systemMessage="The content could not be deleted!"
-                            throw new Error(backendResponse.messages)
-                        }
+                new CmsBackendClient()
+                    .deletePage(pageId)
+                    .then(() => {
+                        this.$store.state.systemMessage.status="success"
+                        this.$store.state.systemMessage.systemMessage="The content was deleted successfully!"
+                        this.$emit("reload-navigation")
                     })
-                    .catch(error => console.error(error))
+                    .catch(error => {
+                        this.$store.state.systemMessage.status="error"
+                        this.$store.state.systemMessage.systemMessage="The content could not be deleted!"
+                        console.error(error)
+                    })
             },
             duplicateContent(pageId) {
-                const url = new URL(`admin/pages/${this.$store.state.site.name}/clone/${pageId}`, this.$store.state.site.api.baseUrl)
-                return axios.post(url.href)
-                .then(response => response.data) // get data (from backend) from (http) response
-                .then(backendResponse => {
-                    if(backendResponse.success) {
+                new CmsBackendClient()
+                    .clonePage(pageId)
+                    .then(() => {
                         this.$store.commit('systemMessage', 'success', 'The content was duplicated successfully!')
                         this.$emit("reloadNavigation")
-                    } else {
-                        throw new Error(backendResponse.messages)
-                    }
-                })
-                .catch(error => console.error(error))
+                    })
+                    .catch(error => {
+                        this.$store.commit('systemMessage', 'error', 'The content could not be duplicated!')
+                        console.error(error)
+                    })
             },
             toggleStatus(pageId, active) {
-                const url = new URL(`admin/pages/${this.$store.state.site.name}/${pageId}`, this.$store.state.site.api.baseUrl)
-                return axios.put(url.href, {active: !active})
-                .then(response => response.data) // get data (from backend) from (http) response
-                .then(backendResponse => {
-                    if(backendResponse.success) {
+                new CmsBackendClient()
+                    .updateActiveState(pageId, !active)
+                    .then(() => {
                         this.$store.state.systemMessage.status="success"
-                        if(active) {
+                        if(!active) {
                             this.$store.state.systemMessage.systemMessage = "The content was activated successfully!"
                         } else {
                             this.$store.state.systemMessage.systemMessage = "The content was deactivated successfully!"
                         }
                         this.$emit("reloadNavigation")
-                    } else {
-                        this.$store.state.systemMessage.status="error"
-                        this.$store.state.systemMessage.systemMessage="The content could not be duplicated!"
-                        throw new Error(backendResponse.messages)
-                    }
+                    })
+                    .catch(error => {
+                      this.$store.state.systemMessage.status="error"
+                      this.$store.state.systemMessage.systemMessage="The content could not be duplicated!"
+                      console.error(error)
+                    })
+            },
+            updatePageTitle() {
+                new CmsBackendClient()
+                .updatePageTitle(this.newNavEntryId, this.newNavigationEntry)
+                .then(() => {
+                    this.$store.commit('systemMessage', 'success', 'The page has be saved successfully')
+                    this.newNavEntryId = ""
+                    this.newNavigationEntry = ""
+                    this.$emit("reloadNavigation")
                 })
-                .catch(error => console.error(error))
+                .catch(error => {
+                    this.$store.commit('systemMessage', 'error', 'The page cannot be saved!')
+                    console.error(error)
+                })
             }
         },
         watch: {

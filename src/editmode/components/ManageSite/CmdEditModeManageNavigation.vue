@@ -25,7 +25,7 @@
 </template>
 
 <script>
-  import axios from "axios"
+  import {CmsBackendClient} from "../../../client/CmsClient"
   import CmdEditModeNavigationLevel from "./CmdEditModeNavigationLevel"
 
   export default {
@@ -63,9 +63,8 @@
               this.entrySelectedMainNavigation = !this.entrySelectedMainNavigation
           },
           loadNavigationEntries(path) {
-              const url = new URL(`admin/pages/${this.$store.state.site.name}/${path}`, this.$store.state.site.api.baseUrl)
-              return axios.get(url.href, {headers: {"Accept-Language": this.$store.state.language}})
-                  .then(response => response.data) // get data from response
+              return new CmsBackendClient()
+                  .loadSiteNavigation(path)
                   .catch(error => console.error(error))
           },
           reloadNavigation(navigationName) {

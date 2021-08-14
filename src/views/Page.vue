@@ -4,7 +4,7 @@
 
 <script>
   import PageComponent from "../components/PageComponent"
-  import axios from "axios"
+  import {CmsFrontendClient} from "../client/CmsClient"
 
   export default {
       name: "Page",
@@ -38,10 +38,8 @@
       },
       methods: {
           loadPage() {
-              const url = new URL(`pages/of-site/${this.$store.state.site.name}`, this.$store.state.site.api.baseUrl)
-              url.searchParams.set("relativePagePath", this.pageName.replace(/\.html$/, ""))
-              axios.get(url.href, {headers: {"Accept-Language": this.$store.state.language}})
-                  .then(response => response.data)
+              new CmsFrontendClient()
+                  .loadPage(this.pageName)
                   .then(this.updatePageTitle)
                   .then(this.updatePageMetaData)
                   .then(this.updateBodyId)

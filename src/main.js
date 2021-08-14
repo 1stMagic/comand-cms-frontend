@@ -42,14 +42,15 @@ import "@/assets/css/global/editmode.scss"
 
 import * as componentLibraryComponents from "comand-component-library"
 
+import {CmsFrontendClient} from "./client/CmsClient"
+
 /* load cms-configuration */
 axios.get(process.env.BASE_URL + "cms-config.json")
     .then(response => response.data)
     .then(config => {
-        const url = new URL("sites/" + encodeURIComponent(config.site), config.api.baseUrl)
-        return axios.get(url.href)
-            .then(response => response.data)
-            .then(site => ({ ...site, name: config.site, api: config.api, assets: config.assets }))
+        return new CmsFrontendClient(config.api.baseUrl, config.site)
+            .loadSite()
+            .then(site => ({...site, name: config.site, api: config.api, assets: config.assets}))
     })
     .then(site => {
         store.commit("site", site)

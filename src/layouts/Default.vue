@@ -48,7 +48,7 @@ import CmdFooterNavigation from "comand-component-library/src/components/CmdFoot
 import CmdOpeningHours from "comand-component-library/src/components/CmdOpeningHours"
 import CmdSystemMessage from "comand-component-library/src/components/CmdSystemMessage"
 import CmdAddressData from "comand-component-library/src/components/CmdAddressData"
-import axios from "axios"
+import {CmsFrontendClient} from "../client/CmsClient"
 import store from "../store"
 
   export default {
@@ -179,9 +179,8 @@ import store from "../store"
         "$store.state.language":{
           handler() {
             document.querySelector("html").lang = this.$store.state.language
-              const url = new URL(`sites/${this.$store.state.site.name}`, this.$store.state.site.api.baseUrl)
-              axios.get(url.href, {headers: {"Accept-Language": this.$store.state.language}})
-                  .then(response => response.data)
+              new CmsFrontendClient()
+                  .loadSite()
                   .then(({supportedLanguages, mainNavigation, topNavigation, footerNavigation}) => ({ ...this.$store.state.site, supportedLanguages, mainNavigation, topNavigation, footerNavigation }))
                   .then(site => store.commit("site", site))
                   .catch(error => console.error(error))
