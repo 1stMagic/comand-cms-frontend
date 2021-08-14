@@ -1,7 +1,7 @@
 <template>
   <h4>Google Analytics&trade;</h4>
   <fieldset class="flex-container">
-    <CmdSwitchButton type="checkbox" id="google-analytics-activated" :colored="true" onLabel="Activate" offLabel="Deactivate" @input="activated = !activated" />
+    <CmdSwitchButton type="checkbox" id="google-analytics-activated" v-model:value="activated"  :colored="true" onLabel="Activate" offLabel="Deactivate" />
     <CmdFormElement v-if="activated" element="textarea" labelText="Script:" placeholder="Enter script (without <script>-tag)" />
   </fieldset>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <h4>Google Recaptcha&trade;</h4>
   <fieldset class="flex-container">
-    <CmdSwitchButton type="checkbox" id="google-recaptcha-activated" :colored="true" onLabel="Activate" offLabel="Deactivate" @input="activated = !activated" />
+    <CmdSwitchButton type="checkbox" id="google-recaptcha-activated" v-model:value="activated"  :colored="true" onLabel="Activate" offLabel="Deactivate" />
     <template v-if="activated">
       <CmdFormElement element="input" type="text" labelText="Web site key:" :required="activated" placeholder="Enter key" />
       <CmdFormElement element="input" type="text" labelText="Secret key:" :required="activated" placeholder="Enter key" />
@@ -20,7 +20,7 @@
       name: "CmdEditModeManageGoogleRecaptcha",
       data() {
           return {
-            activated: false
+            activated: true
           }
       },
       components: {

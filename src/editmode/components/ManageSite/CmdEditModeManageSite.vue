@@ -2,7 +2,7 @@
   <aside class="cmd-edit-mode-manage-site" :class="{'close' : !openManageSiteSidebar}">
     <div>
       <h2>Manage site</h2>
-      <CmdAccordion :accordionData="1">
+      <CmdAccordion :accordionData="5">
         <template v-slot:accordionHeadline0>
           <h3>
             <span class="icon-bars"></span><span>Navigation</span>
@@ -11,44 +11,36 @@
         <template v-slot:accordionContent0>
           <CmdEditModeManageNavigation />
         </template>
-      </CmdAccordion>
-      <CmdAccordion :accordionData="1">
-        <template v-slot:accordionHeadline0>
+        <template v-slot:accordionHeadline1>
           <h3>
             <span class="icon-user-group"></span><span>User groups</span>
           </h3>
         </template>
-        <template v-slot:accordionContent0>
+        <template v-slot:accordionContent1>
           <CmdEditModeManageUserGroups />
         </template>
-      </CmdAccordion>
-      <CmdAccordion :accordionData="1">
-        <template v-slot:accordionHeadline0>
+        <template v-slot:accordionHeadline2>
           <h3>
             <span class="icon-download"></span><span>Backups</span>
           </h3>
         </template>
-        <template v-slot:accordionContent0>
+        <template v-slot:accordionContent2>
           <CmdEditModeManageBackups />
         </template>
-      </CmdAccordion>
-      <CmdAccordion :accordionData="1">
-        <template v-slot:accordionHeadline0>
+        <template v-slot:accordionHeadline3>
           <h3>
             <span class="icon-globe"></span><span>Localization</span>
           </h3>
         </template>
-        <template v-slot:accordionContent0>
+        <template v-slot:accordionContent3>
           <CmdEditModeManageLocalization />
         </template>
-      </CmdAccordion>
-      <CmdAccordion :accordionData="1">
-        <template v-slot:accordionHeadline0>
+        <template v-slot:accordionHeadline4>
           <h3>
             <span class="icon-google-analytics"></span><span>Google&trade; Tools</span>
           </h3>
         </template>
-        <template v-slot:accordionContent0>
+        <template v-slot:accordionContent4>
           <CmdEditModeManageGoogleTools />
         </template>
       </CmdAccordion>
@@ -72,7 +64,6 @@
               <span class="icon-user-profile"></span>
               <span>{{ username }}</span>
             </div>
-
           </a>
         </li>
       </ul>

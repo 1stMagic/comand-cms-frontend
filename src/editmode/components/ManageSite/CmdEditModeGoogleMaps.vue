@@ -1,7 +1,7 @@
 <template>
   <h4>Google Maps&trade;</h4>
   <fieldset class="flex-container">
-    <CmdSwitchButton type="checkbox" id="google-maps-activated" :colored="true" onLabel="Activate" offLabel="Deactivate" @input="activated = !activated" />
+    <CmdSwitchButton type="checkbox" id="google-maps-activated" v-model:value="activated" :colored="true" onLabel="Activate" offLabel="Deactivate" />
     <template v-if="activated">
       <CmdFormElement element="input" type="checkbox" labelText="Link all addresses with Google Maps&trade;" />
       <CmdFormElement element="input" type="checkbox" labelText="Enable Google Maps&trade; as component" />

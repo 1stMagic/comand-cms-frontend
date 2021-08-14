@@ -1,7 +1,7 @@
 <template>
   <div class="vue-container editmode">
-    <CmdSystemMessage v-show="systemMessage" :messageStatus="$store.state.systemMessage.status" :systemMessage="$store.state.systemMessage.systemMessage " />
-    <CmdEditModeManageSite />
+    <CmdSystemMessage v-show="$store.getters.showSystemMessage" :messageStatus="$store.state.systemMessage.status" :systemMessage="$store.state.systemMessage.systemMessage " />
+    <CmdEditModeManageSite v-if="$store.state.login" />
     <CmdSiteHeader :navigation-entries="[]" :languages="[]" :close-offcanvas="{}" :mainNavigationEntries="$store.state.site.mainNavigation" :sticky="true" @click="onNavigation">
       <template v-slot:top-header>
         <CmdTopHeaderNavigation :topHeaderNavigationData="topHeaderNavigationData" v-if="topHeaderNavigationData" />

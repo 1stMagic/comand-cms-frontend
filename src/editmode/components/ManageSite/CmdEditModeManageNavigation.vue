@@ -71,7 +71,7 @@
           reloadNavigation(navigationName) {
               this.loadNavigationEntries(navigationName).then(responseData => {
                   if(navigationName === 'top-navigation') {
-                      this.topNavigation = responseData
+                      this.topHeaderNavigation = responseData
                   } else if(navigationName === 'main-navigation') {
                       this.mainNavigation = responseData
                   } else if(navigationName === 'footer-navigation') {

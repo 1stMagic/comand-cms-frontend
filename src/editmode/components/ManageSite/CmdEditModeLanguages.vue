@@ -11,7 +11,7 @@
     <tbody>
       <tr v-for="(language, index) in languagesData" :key="index">
         <td>
-          <img src="" :alt="language.iso2" :title="language.name" />
+          <img :src="require('comand-component-library/src/assets/images/flags/flag-' + language.iso2 + '.svg')" :alt="language.iso2" :title="language.name" />
         </td>
         <td>
           <CmdSwitchButton type="checkbox" :id="'language-' + language.iso2" :colored="true" onLabel="On" offLabel="off" />

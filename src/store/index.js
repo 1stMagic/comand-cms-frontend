@@ -7,8 +7,8 @@ export default createStore({
     api: {},
     login: false,
     systemMessage: {
-      status: "error",
-      systemMessage: "text"
+      status: "",
+      systemMessage: ""
     }
   },
   /* update states */
@@ -33,5 +33,13 @@ export default createStore({
   actions: {
   },
   modules: {
+  },
+  getters: {
+    showSystemMessage(state) {
+      if(state.systemMessage.status && state.systemMessage.systemMessage) {
+        return true
+      }
+      return false
+    }
   }
 })

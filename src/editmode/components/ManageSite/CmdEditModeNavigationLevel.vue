@@ -21,7 +21,7 @@
               <span class="icon-arrow-right add"></span>
             </a>
           </li>
-          <li class="status">
+          <li>
             <a href="#" @click.prevent="editNavigation('toggleStatus', navigationEntry.title, navigationEntry.id, navigationEntry.active)" :title="'Toggle status for ' +  navigationEntry.title">
               <span :class="navigationEntry.active ? 'icon-check' : 'icon-cancel'"></span>
             </a>
@@ -106,8 +106,7 @@
                 .then(response => response.data) // get data (from backend) from (http) response
                 .then(backendResponse => {
                     if(backendResponse.success) {
-                        this.$store.state.systemMessage.status="success"
-                        this.$store.state.systemMessage.systemMessage="The content was duplicated successfully!"
+                        this.$store.commit('systemMessage', 'success', 'The content was duplicated successfully!')
                         this.$emit("reloadNavigation")
                     } else {
                         throw new Error(backendResponse.messages)
