@@ -2,7 +2,7 @@
   <aside class="cmd-edit-mode-manage-site" :class="{'close' : !openManageSiteSidebar}">
     <div>
       <h2>Manage site</h2>
-      <CmdAccordion :accordionData="5">
+      <CmdAccordion :accordionData="5" class="manage-navigation">
         <template v-slot:accordionHeadline0>
           <h3>
             <span class="icon-bars"></span><span>Navigation</span>

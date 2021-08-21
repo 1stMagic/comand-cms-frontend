@@ -1,11 +1,7 @@
 <template>
   <ul class="cmd-edit-mode-navigation-level">
     <li v-for="(navigationEntry, index) in navigationEntries" :key="index" :class="{open : showSubLevel[index] && navigationEntry.children && navigationEntry.children.length}">
-      <template v-if="navigationEntry.id === newNavEntryId" >
-        <input type="text" v-model="newNavigationEntry" />
-        <button type="button" class="button" title="Save entry" @click="updatePageTitle"><span class="icon-check"></span></button>
-      </template>
-      <div v-else :class="[navigationEntry.active ? 'active' : 'inactive', {'selected' : selected === index}]">
+      <div :class="[navigationEntry.active ? 'active' : 'inactive', {'selected' : selected === index}]">
         <a href="#"
            @click.prevent="loadComponentConfig(index)"
            :target="navigationEntry.href"
@@ -16,18 +12,23 @@
         </a>
         <ul class="icon-wrapper" aria-expanded="true">
           <li>
-            <a href="#" @click.prevent="editNavigation('addEntry', navigationEntry.title, navigationEntry.id)" title="Add new entry below this one">
+            <a href="#" @click.prevent="editNavigation('openSettings', navigationEntry.title, navigationEntry.id)" :title="'Open settings for ' + navigationEntry.title">
+              <span class="icon-cogs"></span>
+            </a>
+          </li>
+          <li>
+            <a href="#" @click.prevent="editNavigation('addEntry', null, navigationEntry.id)" :title="'Add new entry below ' + navigationEntry.title">
               <span class="icon-plus add"></span>
             </a>
           </li>
           <li>
-            <a href="#" @click.prevent="editNavigation('addSubEntry', navigationEntry.title, navigationEntry.id)" title="Add new entry on sublevel">
+            <a href="#" @click.prevent="editNavigation('addSubEntry', null, navigationEntry.id)" :title="'Add new entry on sublevel of ' + navigationEntry.title">
               <span class="icon-arrow-right add"></span>
             </a>
           </li>
           <li>
             <a href="#" @click.prevent="editNavigation('toggleStatus', navigationEntry.title, navigationEntry.id, navigationEntry.active)" :title="'Toggle status for ' +  navigationEntry.title">
-              <span :class="navigationEntry.active ? 'icon-check' : 'icon-cancel'"></span>
+              <span :class="navigationEntry.active ? 'icon-check' : 'icon-cancel'" aria-live="polite"></span>
             </a>
           </li>
           <li>
@@ -45,10 +46,16 @@
       <CmdEditModeNavigationLevel v-if="navigationEntry.children && showSubLevel[index]" :navigationEntries="navigationEntry.children" />
     </li>
   </ul>
+  <button class="button add" @click.prevent="editNavigation('addEntry', null, null)" title="Add new entry">
+    <span class="icon-plus"></span><span>Add new entry</span>
+  </button>
 </template>
 
 <script>
     import {CmsBackendClient} from "../../../client/CmsClient"
+
+    // import Cmd-components
+    import {openFancyBox} from "comand-component-library/src/components/CmdFancyBox"
 
     export default {
         name: "CmdEditModeNavigationLevel",
@@ -72,6 +79,13 @@
             }
         },
         methods: {
+          showFancyBox(type, content) {
+            if (type === 'text') {
+              openFancyBox({content: content})
+            } else if (type === 'image') {
+              openFancyBox({url: content})
+            }
+          },
             loadComponentConfig (index) {
                this.showSubLevel[index] = !this.showSubLevel[index]
                this.selected = index
@@ -79,7 +93,7 @@
             },
             editNavigation (action, title, pageId, active) {
                 if (action === "addEntry") {
-                    this.addEntry("New page", pageId)
+                    this.openSettings(null, pageId)
                 } else if (action === "addSubEntry") {
                     this.addSubEntry("New sub-page", pageId)
                 } else if(action === "delete") {
@@ -88,26 +102,9 @@
                   this.duplicateContent(pageId)
                 } else if (action === "toggleStatus") {
                     this.toggleStatus(pageId, active)
+                } else if (action === "openSettings") {
+                  this.openSettings(pageId)
                 }
-            },
-            addEntry(title, afterPageId) {
-                const method = (type => {
-                    if (type === "top-navigation") return "createTopNavigationPage"
-                    if (type === "footer-navigation") return "createFooterNavigationPage"
-                    return "createMainNavigationPage"
-                })(this.type)
-                new CmsBackendClient()[method](title, afterPageId)
-                    .then(response => {
-                        this.$store.state.systemMessage.status="success"
-                        this.$store.state.systemMessage.systemMessage="The new page was successfully created!"
-                        this.$emit("reload-navigation")
-                        this.newNavEntryId = response.id
-                    })
-                    .catch(error => {
-                        this.$store.state.systemMessage.status="error"
-                        this.$store.state.systemMessage.systemMessage="The new page could not be created!"
-                        console.error(error)
-                    })
             },
             addSubEntry(title, parentId) {
                 const method = (type => {
@@ -187,7 +184,11 @@
                     this.$store.commit('systemMessage', 'error', 'The page cannot be saved!')
                     console.error(error)
                 })
-            }
+            },
+          openSettings(pageId, afterPageId) {
+            this.$store.commit("fancybox", true)
+            this.$store.commit("editPageSettings", pageId, afterPageId)
+          }
         },
         watch: {
             entrySelected () {

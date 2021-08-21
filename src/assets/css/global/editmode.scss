@@ -30,21 +30,28 @@
       .cmd-accordion {
         margin: 0;
 
-        a {
+        > a {
           border-bottom: 0;
-        }
 
-        h3 {
-          span {
-            font-size: 1.4rem;
-            font-weight: normal;
+          &:hover, &:active, &:focus {
+            span[class*="icon"] {
+              color: var(--primary-color);
+            }
           }
 
-          span[class*="icon"] {
-            font-size: 1.5rem;
-            padding: .4rem .6rem .4rem .6rem;
-            background: url("../../images/hexagon.svg") no-repeat;
-            background-size: contain;
+
+          h3 {
+            span {
+              font-size: 1.4rem;
+              font-weight: normal;
+            }
+
+            span[class*="icon"] {
+              font-size: 1.5rem;
+              padding: .4rem .6rem .4rem .6rem;
+              background: url("../../images/hexagon.svg") no-repeat;
+              background-size: contain;
+            }
           }
         }
 
@@ -54,6 +61,12 @@
 
           h4 {
             font-size: 1.6rem;
+          }
+        }
+
+        &.manage-navigation {
+          .accordion-content {
+            padding: 0;
           }
         }
       }
@@ -152,7 +165,9 @@
                     }
                   }
                 }
-              } /* end .active */
+              }
+
+              /* end .active */
 
               &.inactive {
                 > a {
@@ -179,7 +194,9 @@
                     }
                   }
                 }
-              } /* end inactive */
+              }
+
+              /* end inactive */
             }
 
             &.open {
@@ -191,7 +208,9 @@
                   }
                 }
               }
-            } /* end .open */
+            }
+
+            /* end .open */
           }
 
           li {
@@ -240,7 +259,9 @@
                     }
                   }
                 }
-              } /* end .icon-wrapper */
+              }
+
+              /* end .icon-wrapper */
             }
 
             a {

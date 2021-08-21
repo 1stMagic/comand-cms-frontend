@@ -9,6 +9,13 @@ export default createStore({
     systemMessage: {
       status: "",
       systemMessage: ""
+    },
+    fancybox: {
+      show: false
+    },
+    editPageSettings: {
+      pageId: "",
+      afterPageId: ""
     }
   },
   /* update states */
@@ -28,6 +35,13 @@ export default createStore({
     systemMessage(state, status, message) {
       state.systemMessage.status = status
       state.systemMessage.systemMessage = message
+    },
+    fancybox(state, status) {
+      state.fancybox.show = status
+    },
+    editPageSettings(state, pageId, afterPageId) {
+      state.editPageSettings.pageId = pageId
+      state.editPageSettings.afterPageId = afterPageId
     }
   },
   actions: {

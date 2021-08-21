@@ -17,10 +17,7 @@ import "comand-component-library/src/assets/styles/logos-iconfont.css"
 import "comand-component-library/dist/comand-component-library.css"
 
 /* import css for comand-component-library-structure */
-import "comand-component-library/src/assets/styles/comand-component-library-structure.scss"
-
-/* import css for comand-component-library-layout */
-import "comand-component-library/src/assets/styles/comand-component-library-layout.scss"
+import "comand-component-library/src/assets/styles/global-styles.scss"
 
 /* import css for global transitions */
 import 'comand-component-library/src/assets/styles/transitions.scss'
@@ -68,7 +65,7 @@ axios.get(process.env.BASE_URL + "cms-config.json")
         return app
     })
     .then(app => {
-        // Object.entries(componentLibraryComponents).forEach(([name]) => console.log("Comp: " + name))
+        //Object.entries(componentLibraryComponents).forEach(([name]) => console.log("Comp: " + name))
         Object.entries(componentLibraryComponents).forEach(([name, component]) => app.component(name, component))
         return app
     })

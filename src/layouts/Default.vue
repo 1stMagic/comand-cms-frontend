@@ -7,7 +7,7 @@
         <CmdTopHeaderNavigation :topHeaderNavigationData="topHeaderNavigationData" v-if="topHeaderNavigationData" />
       </template>
       <template v-slot:logo>
-        <CmdLogo altText="CoManD Logo" :pathDefaultLogo="require('@/assets/images/logo.svg')" :pathDarkmodeLogo="require('@/assets/images/logo-darkmode.svg')" />
+        <CmdCompanyLogo altText="CoManD Logo" :pathDefaultLogo="require('@/assets/images/logo.svg')" :pathDarkmodeLogo="require('@/assets/images/logo-darkmode.svg')" :link="{type:'', tooltip:''}" />
       </template>
     </CmdSiteHeader>
     <main class="container" id="content">
@@ -21,6 +21,9 @@
     </CmdWidthLimitationWrapper>
     <CmdBackToTopButton tooltip="Back to top" />
     <CmdEditModeManageContents />
+    <CmdFancyBox v-model:show="$store.state.fancybox.show">
+      <CmdEditModePageSettings />
+    </CmdFancyBox>
   </div>
 </template>
 
@@ -36,11 +39,12 @@ import openingHoursData from "@/assets/data/opening-hours.json"
 // EditMode
 import CmdEditModeManageSite from "@/editmode/components/ManageSite/CmdEditModeManageSite"
 import CmdEditModeManageContents from "@/editmode/components/ManageContents/CmdEditModeManageContents"
+import CmdEditModePageSettings from "@/editmode/components/ManageSite/CmdEditModePageSettings"
 
 import CmdBackToTopButton from "comand-component-library/src/components/CmdBackToTopButton"
 import CmdSiteHeader from "comand-component-library/src/components/CmdSiteHeader"
 import CmdTopHeaderNavigation from "comand-component-library/src/components/CmdTopHeaderNavigation"
-import CmdLogo from "comand-component-library/src/components/CmdLogo"
+import CmdCompanyLogo from "comand-component-library/src/components/CmdCompanyLogo"
 import CmdWidthLimitationWrapper from "comand-component-library/src/components/CmdWidthLimitationWrapper"
 // import CmdBreadcrumbs from "comand-component-library/src/components/CmdBreadcrumbs"
 import CmdSwitchLanguage from "comand-component-library/src/components/CmdSwitchLanguage"
@@ -48,6 +52,7 @@ import CmdFooterNavigation from "comand-component-library/src/components/CmdFoot
 import CmdOpeningHours from "comand-component-library/src/components/CmdOpeningHours"
 import CmdSystemMessage from "comand-component-library/src/components/CmdSystemMessage"
 import CmdAddressData from "comand-component-library/src/components/CmdAddressData"
+import CmdFancyBox from "comand-component-library/src/components/CmdFancyBox"
 import {CmsFrontendClient} from "../client/CmsClient"
 import store from "../store"
 
@@ -68,11 +73,13 @@ import store from "../store"
     components: {
         CmdEditModeManageSite,
         CmdEditModeManageContents,
+        CmdEditModePageSettings,
         CmdBackToTopButton,
         CmdSiteHeader,
         CmdTopHeaderNavigation,
-        CmdLogo,
+        CmdCompanyLogo,
         CmdWidthLimitationWrapper,
+        CmdFancyBox,
         // CmdBreadcrumbs,
         CmdSwitchLanguage,
         CmdFooterNavigation,

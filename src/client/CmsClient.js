@@ -133,11 +133,19 @@ export class CmsBackendClient {
         })
     }
 
+    updatePage(pageId, data) {
+        return this.#client.put(`backend/pages/{site}/${encodeURIComponent(pageId)}`, data)
+    }
+
     clonePage(pageId) {
         return this.#client.post(`backend/pages/{site}/clone/${encodeURIComponent(pageId)}`)
     }
 
     deletePage(pageId) {
         return this.#client.delete(`backend/pages/{site}/${encodeURIComponent(pageId)}`)
+    }
+
+    loadPage(pageId) {
+        return this.#client.get(`backend/pages/{site}/${encodeURIComponent(pageId)}`)
     }
 }

@@ -1,21 +1,16 @@
 <template>
-  <h4>Top-Header-Navigation</h4>
   <CmdEditModeNavigationLevel
           :navigationEntries="topHeaderNavigation"
           @reload-navigation="reloadNavigation('top-navigation')"
           @entry-selected="toggleEntrySelectedTopHeaderNavigation"
           :entrySelected="entrySelectedTopHeaderNavigation"
   />
-  <hr />
-  <h4>Main-Navigation</h4>
   <CmdEditModeNavigationLevel
           :navigationEntries="mainNavigation"
           @reload-navigation="reloadNavigation('main-navigation')"
           @entry-selected="toggleEntrySelectedMainNavigation"
           :entrySelected="entrySelectedMainNavigation"
   />
-  <hr />
-  <h4>Footer-Navigation</h4>
   <CmdEditModeNavigationLevel
           :navigationEntries="footerNavigation"
           @reload-navigation="reloadNavigation('footer-navigation')"
