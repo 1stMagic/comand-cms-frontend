@@ -1,18 +1,49 @@
 <template>
-  <h2>ID: {{ $store.state.editPageSettings.pageId }}</h2>
-  <CmdFormElement element="input" type="text" v-model:value="navEntryTitle" labelText="Titel in Navigation" id="page-navigation-entry" />
-  <CmdFormElement element="input" type="checkbox" v-model:value="navigationType" inputValue="topHeader" labelText="Top Header Navigation" id="page-navigation-top-header" />
-  <CmdFormElement element="input" type="checkbox" v-model:value="navigationType" inputValue="main" labelText="Main Navigation" id="page-navigation-main" />
-  <CmdFormElement element="input" type="checkbox" v-model:value="navigationType" inputValue="footer" labelText="Footer Navigation" id="page-navigation-footer" />
-  <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="page" labelText="Verlinkt mit Seiteninhalt" name="linked-with" id="link-page" />
-  <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="none"  labelText="Nicht verlinkt (nur Navigationseintrag)" name="linked-with" id="link-none" />
-  <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="file"  labelText="Verlinkt mit Datei" name="linked-with" id="link-file" />
-  <CmdFormElement element="button" type="button" buttonText="Datei wählen" @click="openFileManager" id="select-file" />
-  <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="external"  labelText="Verlinkt mit externer Website" name="linked-with" id="link-external-site" />
-  <CmdFormElement element="input" type="url" v-model:value="externalUrl" labelText="Link zur externen Website" id="url-external-site" />
+  <fieldset class="flex-container">
+    <h2>Settings for <template v-if="navEntryTitle">{{navEntryTitle}}</template><template v-else>new page</template></h2>
+    <CmdFormElement element="input"
+                    type="text"
+                    required="required"
+                    v-model:value="navEntryTitle"
+                    placeholder="Title in navigation"
+                    labelText="Title in navigation:"
+                    id="page-navigation-entry" />
+    <div class="label">
+      <span>Eintrag in folgender Navigation anzeigen:<sup>*</sup></span>
+      <div class="flex-container input-wrapper">
+        <CmdFormElement element="input" type="checkbox" v-model:value="navigationType" inputValue="topHeader" labelText="Top-Header-Navigation" id="page-navigation-top-header" />
+        <CmdFormElement element="input" type="checkbox" v-model:value="navigationType" inputValue="main" labelText="Main-Navigation" id="page-navigation-main" />
+        <CmdFormElement element="input" type="checkbox" v-model:value="navigationType" inputValue="footer" labelText="Footer-Navigation" id="page-navigation-footer" />
+        <CmdFormElement element="input" type="checkbox" v-model:value="navigationType" inputValue="none" labelText="Don't show in navigation" id="page-navigation-none" />
+      </div>
+    </div>
+    <div class="label">
+      <span>Eintrag verlinken:<sup>*</sup></span>
+      <div class="flex-container input-wrapper">
+        <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="page" labelText="mit Seiteninhalt" name="linked-with" id="link-page" />
+        <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="none" labelText="Nichts (nur Eintrag)" name="linked-with" id="link-none" />
+        <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="file" labelText="mit Datei" name="linked-with" id="link-file" />
+        <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="external" labelText="mit externer Website" name="linked-with" id="link-external-site" />
+      </div>
+    </div>
+    <CmdFormElement v-if="linkedWith === 'file'"
+                    element="button"
+                    type="button"
+                    buttonText="Datei wählen"
+                    :buttonIcon="{iconClass: 'icon-file', iconPosition: 'before'}"
+                    @click="openFileManager"
+                    id="select-file" />
+    <CmdFormElement v-if="linkedWith === 'external'"
+                    required="required"
+                    element="input" type="url"
+                    v-model:value="externalUrl"
+                    labelText="Link zur externen Website:"
+                    placeholder="Link (inkl. http(s)) zur externen Website"
+                    id="url-external-site" />
+  </fieldset>
   <div class="button-wrapper flex-container">
-    <CmdFormElement element="button" type="button" buttonText="Save settings" @click="saveSettings" />
-  <CmdFormElement element="button" type="button" buttonText="Cancel changes" @click="closeFancybox" />
+    <CmdFormElement element="button" type="button" buttonText="Save settings" class="add" :buttonIcon="{iconClass: 'icon-check', iconPosition: 'before'}" @click="saveSettings" />
+    <CmdFormElement element="button" type="button" buttonText="Cancel changes" class="cancel" :buttonIcon="{iconClass: 'icon-cancel', iconPosition: 'before'}" @click="closeFancybox" />
   </div>
 </template>
 
@@ -25,8 +56,8 @@ export default {
   data() {
     return {
       navEntryTitle: "",
-      navigationType: [],
-      linkedWith: "",
+      navigationType: ["main"],
+      linkedWith: "page",
       externalUrl: ""
     }
   },
@@ -34,6 +65,7 @@ export default {
     CmdFormElement
   },
   created() {
+    //document.getElementById('page-navigation-entry').focus()
     let pageId = this.$store.state.editPageSettings.pageId
 
     if(pageId) {

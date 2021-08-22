@@ -14,7 +14,7 @@
     top: 0;
     left: 0;
     height: 100vh;
-    background: rgba(var(--pure-white-rgb-values), .9);
+    background: linear-gradient(to bottom,  #7d7e7d 0%,#0e0e0e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     backdrop-filter: blur(.5rem);
     box-shadow: .2rem 0 .2rem hsla(0, 100%, 0%, 20%);
     z-index: 500;
@@ -30,43 +30,57 @@
       .cmd-accordion {
         margin: 0;
 
-        > a {
-          border-bottom: 0;
+        > div {
+          > a {
+            border-bottom: 0;
+            border: var(--default-border);
+            background: none;
+            transition: var(--default-transition);
 
-          &:hover, &:active, &:focus {
-            span[class*="icon"] {
-              color: var(--primary-color);
+            > span[class*="icon"] {
+              color: var(--pure-white);
+            }
+
+            &:hover, &:active, &:focus {
+              background: var(--primary-color);
+              transition: var(--default-transition);
+
+              > span {
+                color: var(--pure-white);
+              }
+            }
+
+            h3 {
+              span {
+                font-size: 1.4rem;
+                font-weight: normal;
+                color: var(--pure-white);
+              }
+
+              span[class*="icon"] {
+                font-size: 1.5rem;
+                padding: .4rem .6rem .4rem .6rem;
+                background: url("../../images/hexagon.svg") no-repeat;
+                background-size: contain;
+                color: var(--primary-color);
+              }
             }
           }
 
-
-          h3 {
-            span {
-              font-size: 1.4rem;
-              font-weight: normal;
-            }
-
-            span[class*="icon"] {
-              font-size: 1.5rem;
-              padding: .4rem .6rem .4rem .6rem;
-              background: url("../../images/hexagon.svg") no-repeat;
-              background-size: contain;
-            }
-          }
-        }
-
-        .accordion-content {
-          max-height: 50vh;
-          overflow-y: auto;
-
-          h4 {
-            font-size: 1.6rem;
-          }
-        }
-
-        &.manage-navigation {
           .accordion-content {
-            padding: 0;
+            border-color: var(--pure-white);
+            max-height: 50vh;
+            overflow-y: auto;
+
+            h4 {
+              font-size: 1.6rem;
+            }
+          }
+
+          &.manage-navigation {
+            .accordion-content {
+              padding: 0;
+            }
           }
         }
       }
@@ -87,7 +101,7 @@
             align-items: center;
             border: var(--default-border);
             border-bottom: 0;
-            background: var(--default-background-color);
+            color: var(--pure-white);
             padding: 1rem;
 
             span[class*="icon"] {
@@ -149,6 +163,9 @@
 
               &.active {
                 ul.icon-wrapper {
+                  position: absolute;
+                  top: -2rem;
+                  right: 0;
                   li.status {
                     a {
                       [class*="icon"] {
@@ -350,6 +367,7 @@
     h2 {
       text-align: center;
       font-size: 1.8rem;
+      color: var(--pure-white);
     }
 
     h3:not(:first-of-type) {
@@ -386,20 +404,58 @@
     }
   }
 
-  .add {
-    background: var(--success-color);
-    border-color: var(--success-color);
+  button, &.button {
+    &.add {
+      background: var(--success-color);
+      border-color: var(--success-color);
 
-    [class*="icon"] {
-      font-size: 1rem;
-      font-weight: bold;
+      [class*="icon"] {
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      &:hover, &:active, &:focus {
+        background: var(--pure-white);
+
+        span {
+          color: var(--success-color)
+        }
+      }
     }
 
-    &:hover, &:active, &:focus {
-      background: var(--pure-white);
+    &.cancel {
+      background: var(--error-color);
+      border-color: var(--error-color);
 
-      span {
-        color: var(--success-color)
+      [class*="icon"] {
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      &:hover, &:active, &:focus {
+        background: var(--pure-white);
+
+        span {
+          color: var(--error-color)
+        }
+      }
+    }
+
+    &.remove {
+      background: var(--pure-black);
+      border-color: var(--pure-black);
+
+      [class*="icon"] {
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      &:hover, &:active, &:focus {
+        background: var(--pure-white);
+
+        span {
+          color: var(--pure-black)
+        }
       }
     }
   }

@@ -21,7 +21,7 @@
     </CmdWidthLimitationWrapper>
     <CmdBackToTopButton tooltip="Back to top" />
     <CmdEditModeManageContents />
-    <CmdFancyBox v-model:show="$store.state.fancybox.show">
+    <CmdFancyBox v-model:show="$store.state.fancybox.show" :fancyboxOptions="{printButtons: false}">
       <CmdEditModePageSettings />
     </CmdFancyBox>
   </div>
