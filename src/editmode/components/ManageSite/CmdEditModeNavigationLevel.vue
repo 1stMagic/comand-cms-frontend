@@ -12,17 +12,17 @@
         </a>
         <ul class="icon-wrapper" aria-expanded="true">
           <li>
-            <a href="#" @click.prevent="editNavigation('openSettings', navigationEntry.title, navigationEntry.id)" :title="'Open settings for ' + navigationEntry.title">
+            <a href="#" @click.prevent="editNavigation('openSettings', navigationEntry.title, navigationEntry.id,false, parentTitle)" :title="'Open settings for ' + navigationEntry.title">
               <span class="icon-cogs"></span>
             </a>
           </li>
           <li>
-            <a href="#" @click.prevent="editNavigation('addEntry', null, navigationEntry.id)" :title="'Add new entry below ' + navigationEntry.title">
+            <a href="#" @click.prevent="editNavigation('addEntry', null, navigationEntry.id, false, parentTitle)" :title="'Add new entry below ' + navigationEntry.title">
               <span class="icon-plus add"></span>
             </a>
           </li>
           <li>
-            <a href="#" @click.prevent="editNavigation('addSubEntry', null, navigationEntry.id)" :title="'Add new entry on sublevel of ' + navigationEntry.title">
+            <a href="#" @click.prevent="editNavigation('addSubEntry', null, navigationEntry.id, false, navigationEntry.title)" :title="'Add new entry on sublevel of ' + navigationEntry.title">
               <span class="icon-arrow-right add"></span>
             </a>
           </li>
@@ -43,7 +43,7 @@
           </li>
         </ul>
       </div>
-      <CmdEditModeNavigationLevel v-if="navigationEntry.children && showSubLevel[index]" :navigationEntries="navigationEntry.children" />
+      <CmdEditModeNavigationLevel v-if="navigationEntry.children && showSubLevel[index]" :navigationEntries="navigationEntry.children" :parentTitle="navigationEntry.title" />
     </li>
   </ul>
   <button class="button add" @click.prevent="editNavigation('addEntry', null, null)" title="Add new entry">
@@ -56,6 +56,7 @@
 
     // import Cmd-components
     import {openFancyBox} from "comand-component-library/src/components/CmdFancyBox"
+    import bus from "../../../eventbus";
 
     export default {
         name: "CmdEditModeNavigationLevel",
@@ -76,6 +77,10 @@
             entrySelected: {
                 type: Boolean,
                 default: false
+            },
+            parentTitle: {
+                type: String,
+                default: ""
             }
         },
         methods: {
@@ -87,15 +92,30 @@
             }
           },
             loadComponentConfig (index) {
-               this.showSubLevel[index] = !this.showSubLevel[index]
-               this.selected = index
-               this.$emit('entry-selected')
+                // toggle sublevel-entries
+                this.showSubLevel[index] = !this.showSubLevel[index]
+
+                // set selected entry to current (page-)index to set css-highlight
+                this.selected = index
+
+                // check if entries is page (and active)
+                if(this.navigationEntries[index].page && this.navigationEntries[index].active) {
+                    // load clicked page with router
+                    this.$router.push({
+                        name: "Page",
+                        params: {
+                            language: this.$store.state.language,
+                            page: this.navigationEntries[index].href.split("/")
+                        }
+                    })
+                }
             },
-            editNavigation (action, title, pageId, active) {
+            editNavigation (action, title, pageId, active, parentTitle) {
                 if (action === "addEntry") {
-                    this.openSettings(null, pageId)
+                    this.openSettings(null, pageId, null, parentTitle)
+                    alert(parentTitle)
                 } else if (action === "addSubEntry") {
-                    this.addSubEntry("New sub-page", pageId)
+                    this.openSettings(null, null, pageId, parentTitle)
                 } else if(action === "delete") {
                     this.deleteContent(pageId, title)
                 } else if (action === "duplicate") {
@@ -103,7 +123,7 @@
                 } else if (action === "toggleStatus") {
                     this.toggleStatus(pageId, active)
                 } else if (action === "openSettings") {
-                  this.openSettings(pageId)
+                  this.openSettings(pageId, null, null, parentTitle)
                 }
             },
             addSubEntry(title, parentId) {
@@ -131,45 +151,43 @@
                 new CmsBackendClient()
                     .deletePage(pageId)
                     .then(() => {
-                        this.$store.state.systemMessage.status="success"
-                        this.$store.state.systemMessage.systemMessage="The content was deleted successfully!"
-                        this.$emit("reload-navigation")
+                        this.$store.commit('systemMessage', {status: "success", systemMessage: "The content was deleted successfully!"})
                     })
                     .catch(error => {
-                        this.$store.state.systemMessage.status="error"
-                        this.$store.state.systemMessage.systemMessage="The content could not be deleted!"
+                        this.$store.commit('systemMessage', 'error', 'The content could not be deleted!')
                         console.error(error)
                     })
+                    // emit event via event-bus
+                    .finally(() => bus.emit("reload-navigation"))
             },
             duplicateContent(pageId) {
                 new CmsBackendClient()
                     .clonePage(pageId)
                     .then(() => {
                         this.$store.commit('systemMessage', 'success', 'The content was duplicated successfully!')
-                        this.$emit("reloadNavigation")
                     })
                     .catch(error => {
                         this.$store.commit('systemMessage', 'error', 'The content could not be duplicated!')
                         console.error(error)
                     })
+                    // emit event via event-bus
+                    .finally(() => bus.emit("reload-navigation"))
             },
             toggleStatus(pageId, active) {
                 new CmsBackendClient()
                     .updateActiveState(pageId, !active)
                     .then(() => {
-                        this.$store.state.systemMessage.status="success"
                         if(!active) {
-                            this.$store.state.systemMessage.systemMessage = "The content was activated successfully!"
+                            this.$store.commit('systemMessage', {status: "success", systemMessage: "The content was activated successfully!"})
                         } else {
-                            this.$store.state.systemMessage.systemMessage = "The content was deactivated successfully!"
+                            this.$store.commit('systemMessage', {status: "success", systemMessage: "The content was deactivated successfully!"})
                         }
-                        this.$emit("reloadNavigation")
                     })
                     .catch(error => {
-                      this.$store.state.systemMessage.status="error"
-                      this.$store.state.systemMessage.systemMessage="The content could not be duplicated!"
+                      this.$store.commit('systemMessage', 'error', 'The content could not be duplicated!')
                       console.error(error)
                     })
+                    .finally(() => bus.emit("reload-navigation"))
             },
             updatePageTitle() {
                 new CmsBackendClient()
@@ -185,15 +203,10 @@
                     console.error(error)
                 })
             },
-          openSettings(pageId, afterPageId) {
+          openSettings(pageId, afterPageId, parentId, parentTitle) {
             this.$store.commit("fancybox", true)
-            this.$store.commit("editPageSettings", pageId, afterPageId)
+            this.$store.commit("editPageSettings", { pageId, afterPageId, parentId, parentTitle })
           }
-        },
-        watch: {
-            entrySelected () {
-                this.selected = -1
-            }
         }
     }
 </script>

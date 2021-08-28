@@ -1,13 +1,18 @@
 <template>
   <fieldset class="flex-container">
-    <h2>Settings for <template v-if="navEntryTitle">{{navEntryTitle}}</template><template v-else>new page</template></h2>
+    <h2>Settings for <template v-if="navigationTitle">{{navigationTitle}}</template><template v-else>new page</template></h2>
+    <dl>
+        <dt>Parent entry:</dt>
+        <dd v-if="$store.state.editPageSettings.parentTitle">{{ $store.state.editPageSettings.parentTitle }}</dd>
+        <dd v-else>None (main level)</dd>
+    </dl>
     <CmdFormElement element="input"
-                    type="text"
-                    required="required"
-                    v-model:value="navEntryTitle"
-                    placeholder="Title in navigation"
-                    labelText="Title in navigation:"
-                    id="page-navigation-entry" />
+                type="text"
+                required="required"
+                v-model:value="navigationTitle"
+                placeholder="Title in navigation"
+                labelText="Title in navigation:"
+                id="page-navigation-entry" />
     <div class="label">
       <span>Eintrag in folgender Navigation anzeigen:<sup>*</sup></span>
       <div class="flex-container input-wrapper">
@@ -22,12 +27,13 @@
       <div class="flex-container input-wrapper">
         <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="page" labelText="mit Seiteninhalt" name="linked-with" id="link-page" />
         <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="none" labelText="Nichts (nur Eintrag)" name="linked-with" id="link-none" />
-        <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="file" labelText="mit Datei" name="linked-with" id="link-file" />
+        <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="media" labelText="mit Datei" name="linked-with" id="link-file" />
         <CmdFormElement element="input" type="radio" v-model:value="linkedWith" inputValue="external" labelText="mit externer Website" name="linked-with" id="link-external-site" />
       </div>
     </div>
-    <CmdFormElement v-if="linkedWith === 'file'"
+    <CmdFormElement v-if="linkedWith === 'media'"
                     element="button"
+                    v-model:value="linkedUrl"
                     type="button"
                     buttonText="Datei wählen"
                     :buttonIcon="{iconClass: 'icon-file', iconPosition: 'before'}"
@@ -36,7 +42,7 @@
     <CmdFormElement v-if="linkedWith === 'external'"
                     required="required"
                     element="input" type="url"
-                    v-model:value="externalUrl"
+                    v-model:value="linkedUrl"
                     labelText="Link zur externen Website:"
                     placeholder="Link (inkl. http(s)) zur externen Website"
                     id="url-external-site" />
@@ -49,16 +55,17 @@
 
 <script>
 import CmdFormElement from "comand-component-library/src/components/CmdFormElement"
-import {CmsBackendClient} from "../../../client/CmsClient";
+import {CmsBackendClient} from "../../../client/CmsClient"
+import bus from "../../../eventbus"
 
 export default {
   name: "CmdEditModePageSettings",
   data() {
     return {
-      navEntryTitle: "",
+      navigationTitle: "",
       navigationType: ["main"],
       linkedWith: "page",
-      externalUrl: ""
+      linkedUrl: ""
     }
   },
   components: {
@@ -71,7 +78,7 @@ export default {
     if(pageId) {
       new CmsBackendClient().loadPage(pageId)
           .then(response => {
-            this.navEntryTitle=response.mainNavigationTitle[this.$store.state.language]
+            this.navigationTitle=response.navigationTitle[this.$store.state.language]
 
             if(response.showInTopNavigation) {
               this.navigationType.push("topHeader")
@@ -103,17 +110,22 @@ export default {
     saveSettings() {
       let pageId = this.$store.state.editPageSettings.pageId
       let afterPageId = this.$store.state.editPageSettings.afterPageId
-      let title = this.navEntryTitle
+      let parentId = this.$store.state.editPageSettings.parentId
+      let title = this.navigationTitle
       let saveResponse = null
       if(pageId) {
         // update settings
         saveResponse = new CmsBackendClient().updatePage(pageId, {
-          mainNavigationTitle: {
+          title: {
             [this.$store.state.language]: title
           },
           showInTopNavigation: this.navigationType.includes("topHeader"),
           showInMainNavigation: this.navigationType.includes("main"),
-          showInFooterNavigation: this.navigationType.includes("footer")
+          showInFooterNavigation: this.navigationType.includes("footer"),
+          navigationEntry: this.linkedWith === "none",
+          media: this.linkedWith === "media",
+          external: this.linkedWith === "external",
+          href: this.linkedUrl
         })
 
       } else {
@@ -121,9 +133,13 @@ export default {
         saveResponse = new CmsBackendClient().createPage(title, {
             showInTopNavigation: this.navigationType.includes("topHeader"),
             showInMainNavigation: this.navigationType.includes("main"),
-            showInFooterNavigation: this.navigationType.includes("footer")
+            showInFooterNavigation: this.navigationType.includes("footer"),
+            navigationEntry: this.linkedWith === "none",
+            media: this.linkedWith === "media",
+            external: this.linkedWith === "external",
+            href: this.linkedUrl
         },
-        afterPageId
+            afterPageId, parentId
         )
       }
       saveResponse.then(() => {
@@ -135,6 +151,8 @@ export default {
         this.$store.state.systemMessage.systemMessage="The new page could not be created!"
         console.error(error)
       })
+      // emit event via event-bus
+      .finally(() => bus.emit("reload-navigation"))
       this.closeFancybox()
     },
     closeFancybox() {

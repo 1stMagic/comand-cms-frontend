@@ -1,79 +1,38 @@
 <template>
-  <CmdEditModeNavigationLevel
-          :navigationEntries="topHeaderNavigation"
-          @reload-navigation="reloadNavigation('top-navigation')"
-          @entry-selected="toggleEntrySelectedTopHeaderNavigation"
-          :entrySelected="entrySelectedTopHeaderNavigation"
-  />
-  <CmdEditModeNavigationLevel
-          :navigationEntries="mainNavigation"
-          @reload-navigation="reloadNavigation('main-navigation')"
-          @entry-selected="toggleEntrySelectedMainNavigation"
-          :entrySelected="entrySelectedMainNavigation"
-  />
-  <CmdEditModeNavigationLevel
-          :navigationEntries="footerNavigation"
-          @reload-navigation="reloadNavigation('footer-navigation')"
-          @entry-selected="toggleEntrySelectedFooterNavigation"
-          :entrySelected="entrySelectedFooterNavigation"
-  />
+    <CmdEditModeNavigationLevel
+        :navigationEntries="navigation"
+        @reload-navigation="loadNavigationEntries"
+    />
 </template>
 
 <script>
-  import {CmsBackendClient} from "../../../client/CmsClient"
-  import CmdEditModeNavigationLevel from "./CmdEditModeNavigationLevel"
+import {CmsBackendClient} from "../../../client/CmsClient"
+import CmdEditModeNavigationLevel from "./CmdEditModeNavigationLevel"
+import bus from "../../../eventbus"
 
-  export default {
-      data () {
-          return {
-              topHeaderNavigation: [],
-              mainNavigation: [],
-              footerNavigation: [],
-              entrySelectedTopHeaderNavigation: false,
-              entrySelectedMainNavigation: false,
-              entrySelectedFooterNavigation: false
+export default {
+    data() {
+        return {
+            navigation: []
+        }
+    },
+    components: {
+        CmdEditModeNavigationLevel
+    },
+    created() {
+        // reload navigation if event-bus gets event 'reload-navigation'
+        bus.on("reload-navigation", this.loadNavigationEntries)
 
-          }
-      },
-      components: {
-          CmdEditModeNavigationLevel
-      },
-      created() {
-          // call method and wait for resolved promise (from ajax-call) to assign response-data to data-property)
-          this.loadNavigationEntries('top-navigation').then(responseData => this.topHeaderNavigation = responseData)
-          this.loadNavigationEntries('main-navigation').then(responseData => this.mainNavigation = responseData)
-          this.loadNavigationEntries('footer-navigation').then(responseData => this.footerNavigation = responseData)
-      },
-      methods: {
-          toggleEntrySelectedTopHeaderNavigation() {
-              this.entrySelectedMainNavigation = !this.entrySelectedMainNavigation
-              this.entrySelectedFooterNavigation = !this.entrySelectedFooterNavigation
-          },
-          toggleEntrySelectedMainNavigation() {
-              this.entrySelectedTopHeaderNavigation = !this.entrySelectedTopHeaderNavigation
-              this.entrySelectedFooterNavigation = !this.entrySelectedFooterNavigation
-          },
-          toggleEntrySelectedFooterNavigation() {
-              this.entrySelectedTopHeaderNavigation = !this.entrySelectedTopHeaderNavigation
-              this.entrySelectedMainNavigation = !this.entrySelectedMainNavigation
-          },
-          loadNavigationEntries(path) {
-              return new CmsBackendClient()
-                  .loadSiteNavigation(path)
-                  .catch(error => console.error(error))
-          },
-          reloadNavigation(navigationName) {
-              this.loadNavigationEntries(navigationName).then(responseData => {
-                  if(navigationName === 'top-navigation') {
-                      this.topHeaderNavigation = responseData
-                  } else if(navigationName === 'main-navigation') {
-                      this.mainNavigation = responseData
-                  } else if(navigationName === 'footer-navigation') {
-                      this.footerNavigation = responseData
-                  }
-                }
-              )
-          }
-      }
-  }
+        // call method and wait for resolved promise (from ajax-call) to assign response-data to data-property)
+        this.loadNavigationEntries()
+    },
+    methods: {
+        loadNavigationEntries() {
+            return new CmsBackendClient()
+                .loadSiteNavigation()
+                .then(responseData => this.navigation = responseData)
+                .catch(error => console.error(error))
+        }
+    }
+}
 </script>

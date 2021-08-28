@@ -94,8 +94,8 @@ export class CmsBackendClient {
         this.#client = new CmsClient(baseUrl, site)
     }
 
-    loadSiteNavigation(type) {
-        return this.#client.get(`backend/sites/{site}/${encodeURIComponent(type)}`)
+    loadSiteNavigation() {
+        return this.#client.get(`backend/sites/{site}/navigation`)
     }
 
     createTopNavigationPage(title, afterPageId = null, parentId = null) {
@@ -138,7 +138,10 @@ export class CmsBackendClient {
     }
 
     clonePage(pageId) {
-        return this.#client.post(`backend/pages/{site}/clone/${encodeURIComponent(pageId)}`)
+        return this.#client.post(`backend/pages/{site}/clone/${encodeURIComponent(pageId)}`, {
+            afterPageId: pageId,
+            showInMainNavigation: true
+        })
     }
 
     deletePage(pageId) {

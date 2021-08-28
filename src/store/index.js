@@ -15,7 +15,9 @@ export default createStore({
     },
     editPageSettings: {
       pageId: "",
-      afterPageId: ""
+      afterPageId: "",
+      parentId: "",
+      parentTitle: ""
     }
   },
   /* update states */
@@ -32,16 +34,18 @@ export default createStore({
     login(state, loggedin) {
       state.login = loggedin
     },
-    systemMessage(state, status, message) {
-      state.systemMessage.status = status
-      state.systemMessage.systemMessage = message
+    systemMessage(state, systemMessage) {
+      state.systemMessage.status = systemMessage.status
+      state.systemMessage.systemMessage = systemMessage.systemMessage
     },
     fancybox(state, status) {
       state.fancybox.show = status
     },
-    editPageSettings(state, pageId, afterPageId) {
-      state.editPageSettings.pageId = pageId
-      state.editPageSettings.afterPageId = afterPageId
+    editPageSettings(state, pageSettings) {
+      state.editPageSettings.pageId = pageSettings.pageId
+      state.editPageSettings.afterPageId = pageSettings.afterPageId
+      state.editPageSettings.parentId = pageSettings.parentId
+      state.editPageSettings.parentTitle = pageSettings.parentTitle
     }
   },
   actions: {
