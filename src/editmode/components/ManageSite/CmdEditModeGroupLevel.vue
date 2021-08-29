@@ -42,6 +42,9 @@
 
     import axios from "axios"
 
+    // import vue-eventbus
+    import bus from "../../../eventbus"
+
     export default {
         name: "CmdEditModeGroupLevel",
         data() {
@@ -75,7 +78,7 @@
                     .then(response => response.data) // get data (from backend) from (http) response
                     .then(backendResponse => {
                         if(backendResponse.success) {
-                            this.$emit("reloadNavigation")
+                            bus.on("reload-navigation", this.loadNavigationEntries)
                         } else {
                             throw new Error(backendResponse.messages)
                         }
@@ -88,9 +91,8 @@
                 .then(response => response.data) // get data (from backend) from (http) response
                 .then(backendResponse => {
                     if(backendResponse.success) {
-                        this.$store.state.systemMessage.status = "success"
-                        this.$store.state.systemMessage.systemMessage = "The content was duplicated!"
-                        this.$emit("reloadNavigation")
+                        this.$store.commit("systemMessage", {status: "success", systemMessage: "The content was duplicated successfully!"})
+                        bus.on("reload-navigation", this.loadNavigationEntries)
                     } else {
                         throw new Error(backendResponse.messages)
                     }

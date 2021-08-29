@@ -97,8 +97,7 @@ export default {
             }
           })
           .catch(error => {
-            this.$store.state.systemMessage.status="error"
-            this.$store.state.systemMessage.systemMessage="Configuration for this page could not be loaded!"
+            this.$store.commit("systemMessage", {status: "error", message: "Configuration for this page could not be loaded!"})
             console.error(error)
           })
     }
@@ -143,12 +142,10 @@ export default {
         )
       }
       saveResponse.then(() => {
-        this.$store.state.systemMessage.status="success"
-        this.$store.state.systemMessage.systemMessage="The new page was successfully created!"
+        this.$store.commit("systemMessage", {status: "success", message: "The new page was successfully created!"})
       })
       .catch(error => {
-        this.$store.state.systemMessage.status="error"
-        this.$store.state.systemMessage.systemMessage="The new page could not be created!"
+        this.$store.commit("systemMessage", {status: "error", message: "The new page could not be created!"})
         console.error(error)
       })
       // emit event via event-bus
@@ -161,7 +158,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-
-</style>

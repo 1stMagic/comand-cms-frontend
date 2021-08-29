@@ -8,7 +8,7 @@ export default createStore({
     login: false,
     systemMessage: {
       status: "",
-      systemMessage: ""
+      message: ""
     },
     fancybox: {
       show: false
@@ -36,7 +36,7 @@ export default createStore({
     },
     systemMessage(state, systemMessage) {
       state.systemMessage.status = systemMessage.status
-      state.systemMessage.systemMessage = systemMessage.systemMessage
+      state.systemMessage.message = systemMessage.message
     },
     fancybox(state, status) {
       state.fancybox.show = status

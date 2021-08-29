@@ -30,6 +30,9 @@
 
     import axios from "axios"
 
+    // import vue-eventbus
+    import bus from "../../../eventbus"
+
     export default {
         name: "CmdEditModeGroupLevel",
         data() {
@@ -55,12 +58,10 @@
                     .then(response => response.data) // get data (from backend) from (http) response
                     .then(backendResponse => {
                         if(backendResponse.success) {
-                            this.$store.state.systemMessage.status = "success"
-                            this.$store.state.systemMessage.systemMessage = "The backup " + title + " was deleted successfully!"
-                            this.$emit("reloadNavigation")
+                            this.$store.commit("systemMessage", {status: "success", message: "The backup " + title + " was deleted successfully!"})
+                            bus.on("reload-navigation", this.loadNavigationEntries)
                         } else {
-                            this.$store.state.systemMessage.status = "error"
-                            this.$store.state.systemMessage.systemMessage = "The backup " + title + " could not be deleted!"
+                            this.$store.commit("systemMessage", {status: "error", message: "The backup " + title + " could not be deleted!"})
                             throw new Error(backendResponse.messages)
                         }
                     })
@@ -75,12 +76,10 @@
                 .then(response => response.data) // get data (from backend) from (http) response
                 .then(backendResponse => {
                     if(backendResponse.success) {
-                        this.$store.state.systemMessage.status = "success"
-                        this.$store.state.systemMessage.systemMessage = "The backup  " + title + " was restored successfully!"
-                        this.$emit("reloadNavigation")
+                        this.$store.commit("systemMessage", {status: "success", message: "The backup " + title + " was restored successfully!"})
+                        bus.on("reload-navigation", this.loadNavigationEntries)
                     } else {
-                        this.$store.state.systemMessage.status = "error"
-                        this.$store.state.systemMessage.systemMessage = "The backup  " + title + " could not be restored!"
+                        this.$store.commit("systemMessage", {status: "error", message: "The backup " + title + " could not be restored!"})
                         throw new Error(backendResponse.messages)
                     }
                 })

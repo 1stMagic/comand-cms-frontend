@@ -162,22 +162,23 @@
               }
 
               &.active {
-                ul.icon-wrapper {
-                  position: absolute;
-                  top: -2rem;
-                  right: 0;
-                  li.status {
-                    a {
-                      [class*="icon"] {
-                        border-color: var(--success-color);
-                        background: var(--success-color);
-                      }
+              }
 
-                      &:hover, &:active, &:focus {
-                        [class*="icon"] {
-                          background: var(--pure-white);
-                          color: var(--success-color);
-                        }
+              ul.icon-wrapper {
+                position: absolute;
+                top: -2rem;
+                right: 0;
+                li.status {
+                  a {
+                    [class*="icon"] {
+                      border-color: var(--success-color);
+                      background: var(--success-color);
+                    }
+
+                    &:hover, &:active, &:focus {
+                      [class*="icon"] {
+                        background: var(--pure-white);
+                        color: var(--success-color);
                       }
                     }
                   }
@@ -404,7 +405,7 @@
     }
   }
 
-  button, &.button {
+  button, &.button, a > span {
     &.add {
       background: var(--success-color);
       border-color: var(--success-color);

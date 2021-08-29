@@ -35,12 +35,10 @@ export default {
             // .then(response => response.data) // get data (from backend) from (http) response
             // .then(backendResponse => {
             //     if(backendResponse.success) {
-            //         this.$store.state.systemMessage.status = "success"
-            //         this.$store.state.systemMessage.systemMessage = "The page visibility was changed successfully!"
-            //         this.$emit("reloadNavigation")
+            //         this.$store.commit("systemMessage", {status: "success", message: "The page visibility was changed successfully!"})
+            //         bus.on("reload-navigation", this.loadNavigationEntries)
             //     } else {
-            //         this.$store.state.systemMessage.status = "error"
-            //         this.$store.state.systemMessage.systemMessage = "The page visibility could not be changed!"
+            //         this.$store.commit("systemMessage", {status: "error", message: "The page visibility could not be changed!"})
             //         throw new Error(backendResponse.messages)
             //     }
             // })

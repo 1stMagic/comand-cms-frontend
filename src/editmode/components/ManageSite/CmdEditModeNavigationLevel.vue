@@ -47,7 +47,7 @@
     </li>
   </ul>
   <button class="button add" @click.prevent="editNavigation('addEntry', null, null)" title="Add new entry">
-    <span class="icon-plus"></span><span>Add new entry</span>
+    <span class="icon-plus"></span><span>{{ }}Add new entry on this level</span>
   </button>
 </template>
 
@@ -56,6 +56,8 @@
 
     // import Cmd-components
     import {openFancyBox} from "comand-component-library/src/components/CmdFancyBox"
+
+    // import vue-eventbus
     import bus from "../../../eventbus";
 
     export default {
@@ -92,7 +94,7 @@
             }
           },
             loadComponentConfig (index) {
-                // toggle sublevel-entries
+                // toggle sub-level-entries
                 this.showSubLevel[index] = !this.showSubLevel[index]
 
                 // set selected entry to current (page-)index to set css-highlight
@@ -113,7 +115,6 @@
             editNavigation (action, title, pageId, active, parentTitle) {
                 if (action === "addEntry") {
                     this.openSettings(null, pageId, null, parentTitle)
-                    alert(parentTitle)
                 } else if (action === "addSubEntry") {
                     this.openSettings(null, null, pageId, parentTitle)
                 } else if(action === "delete") {
@@ -134,15 +135,14 @@
                 })(this.type)
                 new CmsBackendClient()[method](title, null, parentId)
                     .then(() => {
-                        this.$store.state.systemMessage.status="success"
-                        this.$store.state.systemMessage.systemMessage="The new page was successfully created!"
-                        this.$emit("reload-navigation")
+                        this.$store.commit("systemMessage", {status: "success", message: "The" + title + " new page was successfully created!"})
+                        bus.on("reload-navigation", this.loadNavigationEntries)
                     })
                     .catch(error => {
-                        this.$store.state.systemMessage.status="error"
-                        this.$store.state.systemMessage.systemMessage="The new page could not be created!"
+                        this.$store.commit("systemMessage", {status: "error", message: "The new page could not be created!"})
                         console.error(error)
                     })
+                    .finally(() => bus.emit("reload-navigation"))
             },
             deleteContent(pageId, title) {
                 if(!confirm("Delete entry " + title + " (incl. content) completely?")) {
@@ -151,10 +151,10 @@
                 new CmsBackendClient()
                     .deletePage(pageId)
                     .then(() => {
-                        this.$store.commit('systemMessage', {status: "success", systemMessage: "The content was deleted successfully!"})
+                        this.$store.commit("systemMessage", {status: "success", message: "The content was deleted successfully!"})
                     })
                     .catch(error => {
-                        this.$store.commit('systemMessage', 'error', 'The content could not be deleted!')
+                        this.$store.commit("systemMessage", {status: "error", message: "The content could not be deleted!"})
                         console.error(error)
                     })
                     // emit event via event-bus
@@ -164,10 +164,10 @@
                 new CmsBackendClient()
                     .clonePage(pageId)
                     .then(() => {
-                        this.$store.commit('systemMessage', 'success', 'The content was duplicated successfully!')
+                        this.$store.commit("systemMessage", {status: "success", systemMessage: "The content was duplicated successfully!"})
                     })
                     .catch(error => {
-                        this.$store.commit('systemMessage', 'error', 'The content could not be duplicated!')
+                        this.$store.commit("systemMessage", {status: "error", systemMessage: "The content could not be duplicated!"})
                         console.error(error)
                     })
                     // emit event via event-bus
@@ -178,13 +178,13 @@
                     .updateActiveState(pageId, !active)
                     .then(() => {
                         if(!active) {
-                            this.$store.commit('systemMessage', {status: "success", systemMessage: "The content was activated successfully!"})
+                            this.$store.commit("systemMessage", {status: "success", systemMessage: "The content was activated successfully!"})
                         } else {
-                            this.$store.commit('systemMessage', {status: "success", systemMessage: "The content was deactivated successfully!"})
+                            this.$store.commit("systemMessage", {status: "success", systemMessage: "The content was deactivated successfully!"})
                         }
                     })
                     .catch(error => {
-                      this.$store.commit('systemMessage', 'error', 'The content could not be duplicated!')
+                        this.$store.commit("systemMessage", {status: "error", systemMessage: "The content could not be duplicated!"})
                       console.error(error)
                     })
                     .finally(() => bus.emit("reload-navigation"))
@@ -193,15 +193,16 @@
                 new CmsBackendClient()
                 .updatePageTitle(this.newNavEntryId, this.newNavigationEntry)
                 .then(() => {
-                    this.$store.commit('systemMessage', 'success', 'The page has be saved successfully')
+                    this.$store.commit("systemMessage", {status: "success", systemMessage: "The page has be saved successfully!"})
                     this.newNavEntryId = ""
                     this.newNavigationEntry = ""
-                    this.$emit("reloadNavigation")
+                    bus.on("reload-navigation", this.loadNavigationEntries)
                 })
                 .catch(error => {
-                    this.$store.commit('systemMessage', 'error', 'The page cannot be saved!')
+                    this.$store.commit("systemMessage", {status: "error", systemMessage: "The page cannot be saved!"})
                     console.error(error)
                 })
+                .finally(() => bus.emit("reload-navigation"))
             },
           openSettings(pageId, afterPageId, parentId, parentTitle) {
             this.$store.commit("fancybox", true)
