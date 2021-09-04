@@ -1,7 +1,6 @@
 <template>
     <CmdEditModeNavigationLevel
         :navigationEntries="navigation"
-        @reload-navigation="loadNavigationEntries"
     />
 </template>
 

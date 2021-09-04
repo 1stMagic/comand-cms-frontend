@@ -54,7 +54,7 @@ export default createStore({
   },
   getters: {
     showSystemMessage(state) {
-      if(state.systemMessage.status && state.systemMessage.systemMessage) {
+      if(state.systemMessage.status && state.systemMessage.message) {
         return true
       }
       return false

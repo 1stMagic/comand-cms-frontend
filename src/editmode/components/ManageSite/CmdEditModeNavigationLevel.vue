@@ -94,6 +94,9 @@
             }
           },
             loadComponentConfig (index) {
+                // commit pageId to store
+                this.$store.commit("editPageSettings", { pageId: this.navigationEntries[index].id })
+
                 // toggle sub-level-entries
                 this.showSubLevel[index] = !this.showSubLevel[index]
 
@@ -135,8 +138,7 @@
                 })(this.type)
                 new CmsBackendClient()[method](title, null, parentId)
                     .then(() => {
-                        this.$store.commit("systemMessage", {status: "success", message: "The" + title + " new page was successfully created!"})
-                        bus.on("reload-navigation", this.loadNavigationEntries)
+                        this.$store.commit("systemMessage", {status: "success", message: "The " + title + " new page was successfully created!"})
                     })
                     .catch(error => {
                         this.$store.commit("systemMessage", {status: "error", message: "The new page could not be created!"})

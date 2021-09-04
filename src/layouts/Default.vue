@@ -1,7 +1,7 @@
 <template>
     <div class="vue-container editmode">
-        <CmdSystemMessage v-show="$store.getters.showSystemMessage" :messageStatus="$store.state.systemMessage.status"
-                          :systemMessage="$store.state.systemMessage.message "/>
+        <CmdSystemMessage v-show="$store.getters.showSystemMessage" :status="$store.state.systemMessage.status"
+                          :message="$store.state.systemMessage.message "/>
         <transition name="fade">
             <CmdEditModeManageSite v-if="$store.state.login"/>
         </transition>
@@ -99,19 +99,21 @@ export default {
             const supportedLanguages = this.$store.state.site.supportedLanguages
             const languages = []
             for (let i = 0; i < supportedLanguages.length; i++) {
-                languages.push({
-                    "iso2": supportedLanguages[i].language,
-                    "tooltip": supportedLanguages[i].title,
-                    "name": supportedLanguages[i].title,
-                    "link": {
-                        "type": "router",
-                        "name": "Page",
-                        "params": {
-                            "language": supportedLanguages[i].language,
-                            "page": this.$route.params.page
+                if(supportedLanguages[i].active) {
+                    languages.push({
+                        "iso2": supportedLanguages[i].language,
+                        "tooltip": supportedLanguages[i].title,
+                        "name": supportedLanguages[i].title,
+                        "link": {
+                            "type": "router",
+                            "name": "Page",
+                            "params": {
+                                "language": supportedLanguages[i].language,
+                                "page": this.$route.params.page
+                            }
                         }
-                    }
-                })
+                    })
+                }
             }
             return languages
         },
