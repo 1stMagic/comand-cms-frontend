@@ -151,4 +151,29 @@ export class CmsBackendClient {
     loadPage(pageId) {
         return this.#client.get(`backend/pages/{site}/${encodeURIComponent(pageId)}`)
     }
+
+    //user groups
+    loadUserGroups() {
+        return this.#client.get("backend/sites/{site}/user-groups")
+    }
+
+    updateUserGroupActiveState(userGroupId, active) {
+        console.log("userGroupId: " + userGroupId + "\nactive: " + active)
+        return Promise.resolve(true)
+    }
+
+    deleteUserGroup(userGroupId) {
+        console.log("userGroupId: " + userGroupId)
+        return Promise.resolve(true)
+    }
+
+    updateUserGroup(userGroupId) {
+        console.log("userGroupId: " + userGroupId)
+        return Promise.resolve(true)
+    }
+
+    createUserGroup(userGroupId) {
+        console.log("userGroupId: " + userGroupId)
+        return Promise.resolve(true)
+    }
 }

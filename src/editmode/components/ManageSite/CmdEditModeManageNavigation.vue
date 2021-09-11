@@ -22,7 +22,7 @@ export default {
         // reload navigation if event-bus gets event 'reload-navigation'
         bus.on("reload-navigation", this.loadNavigationEntries)
 
-        // call method and wait for resolved promise (from ajax-call) to assign response-data to data-property)
+        // call method and wait for resolved promise (from ajax-call) to assign response-data to data-property
         this.loadNavigationEntries()
     },
     methods: {

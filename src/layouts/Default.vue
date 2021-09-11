@@ -29,11 +29,12 @@
         </CmdWidthLimitationWrapper>
         <CmdBackToTopButton tooltip="Back to top"/>
         <transition name="fade">
-            <CmdEditModeManageContents v-if="$store.state.login"/>
+            <CmdEditModeManageContents v-if="$store.state.login && $store.state.pageInformation"/>
         </transition>
         <transition name="fade">
             <CmdFancyBox v-model:show="$store.state.fancybox.show" :fancyboxOptions="{printButtons: false}">
-                <CmdEditModePageSettings />
+                <CmdEditModePageSettings v-if="$store.state.fancybox.type === 'page'" />
+                <CmdEditModeUserGroupSettings v-else-if="$store.state.fancybox.type === 'usergroup'" />
             </CmdFancyBox>
         </transition>
     </div>
@@ -49,6 +50,7 @@ import openingHoursData from "@/assets/data/opening-hours.json"
 import CmdEditModeManageSite from "@/editmode/components/ManageSite/CmdEditModeManageSite"
 import CmdEditModeManageContents from "@/editmode/components/ManageContents/CmdEditModeManageContents"
 import CmdEditModePageSettings from "@/editmode/components/ManageSite/CmdEditModePageSettings"
+import CmdEditModeUserGroupSettings from "@/editmode/components/ManageSite/CmdEditModeUserGroupSettings"
 
 import CmdBackToTopButton from "comand-component-library/src/components/CmdBackToTopButton"
 import CmdSiteHeader from "comand-component-library/src/components/CmdSiteHeader"
@@ -75,12 +77,14 @@ export default {
             // topHeaderNavigationData,
             openingHoursData,
             // addressData
+            loginStatus: false
         }
     },
     components: {
         CmdEditModeManageSite,
         CmdEditModeManageContents,
         CmdEditModePageSettings,
+        CmdEditModeUserGroupSettings,
         CmdBackToTopButton,
         CmdSiteHeader,
         CmdTopHeaderNavigation,
@@ -180,7 +184,6 @@ export default {
             event.preventDefault()
             if (link.attributes.href.nodeValue === '#login') {
                 this.$store.commit('login', true)
-                return
             }
             this.$router.push({
                 name: "Page",

@@ -19,16 +19,19 @@ export default {
             pageModifications: []
         }
     },
+    computed: {
+
+    },
     methods: {
         loadPageModifications() {
             this.pageModifications = []
             new CmsBackendClient().loadPage(this.$store.state.editPageSettings.pageId)
                 .then(response => {
                     this.pageModifications.push(
-                        { label: "created", data: response.modification.created },
-                        { label: "createdBy", data: response.modification.createdBy },
-                        { label: "lastModified", data: response.modification.lastModified },
-                        { label: "lastModifiedBy", data: response.modification.lastModifiedBy }
+                        { label: "Created:", data: (response.modification.created) },
+                        { label: "Created by:", data: response.modification.createdBy },
+                        { label: "Last modified:", data: response.modification.lastModified },
+                        { label: "Last modified by:", data: response.modification.lastModifiedBy }
                     )
                 })
                 .catch(error => {

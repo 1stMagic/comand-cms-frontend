@@ -97,6 +97,15 @@
                 // commit pageId to store
                 this.$store.commit("editPageSettings", { pageId: this.navigationEntries[index].id })
 
+                // commit page information to store
+                new CmsBackendClient()
+                    .loadPage(this.navigationEntries[index].id)
+                    .then(responseData => this.$store.commit("pageInformation", responseData))
+                    .catch(error => {
+                        this.$store.commit("systemMessage", {status: "error", message: "The page could not be loaded!"})
+                        console.error(error)
+                    })
+
                 // toggle sub-level-entries
                 this.showSubLevel[index] = !this.showSubLevel[index]
 
@@ -127,7 +136,7 @@
                 } else if (action === "toggleStatus") {
                     this.toggleStatus(pageId, active)
                 } else if (action === "openSettings") {
-                  this.openSettings(pageId, null, null, parentTitle)
+                    this.openSettings(pageId, null, null, parentTitle)
                 }
             },
             addSubEntry(title, parentId) {
@@ -207,7 +216,7 @@
                 .finally(() => bus.emit("reload-navigation"))
             },
           openSettings(pageId, afterPageId, parentId, parentTitle) {
-            this.$store.commit("fancybox", true)
+            this.$store.commit("fancybox", { show: true, type: "page"})
             this.$store.commit("editPageSettings", { pageId, afterPageId, parentId, parentTitle })
           }
         }

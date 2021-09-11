@@ -1,33 +1,24 @@
 <template>
   <ul class="cmd-edit-mode-group-level">
-    <li v-for="(userGroupEntry, index) in userGroupsData" :key="index" :class="{open : showSubLevel[index] && userGroupEntry.children && userGroupEntry.children.length}">
-      <div :class="[status ? 'active' : 'inactive', {'selected' : selected === index}]">
+    <li v-for="(userGroup, index) in allUserGroups" :key="index">
+      <div :class="userGroup.active ? 'active' : 'inactive'">
         <a href="#"
-           @click.prevent="loadComponentConfig(index)"
-           :target="userGroupEntry.href"
-           :class="{'has-subentries' : (userGroupEntry.children && userGroupEntry.children.length)}"
-           :title="(userGroupEntry.children && userGroupEntry.children.length) ? 'Open page (and toggle subentries)' : 'Open page'">
-          <span v-if="userGroupEntry.children && userGroupEntry.children.length" class="icon-single-arrow-right"></span>
-          <span>{{ userGroupEntry.name }}</span>
+           @click.prevent>
+          {{ userGroup.name }}
         </a>
         <ul class="icon-wrapper" aria-expanded="true">
           <li>
-            <a href="#" @click.prevent="editNavigation('addEntry', userGroupEntry.title, userGroupEntry.id, index)" title="Add new entry below this one">
-              <span class="icon-plus add"></span>
-            </a>
+              <a href="#" @click.prevent="editUserGroup('openSettings', userGroup.name, userGroup.id)" :title="'Open settings for ' + userGroup.name">
+                  <span class="icon-cogs"></span>
+              </a>
           </li>
           <li class="status">
-            <a href="#" @click.prevent="editNavigation('toggleStatus', userGroupEntry.title, userGroupEntry.id, index)" :title="'Toggle status for ' +  userGroupEntry.title">
-              <span :class="status ? 'icon-check' : 'icon-cancel'"></span>
+            <a href="#" @click.prevent="editUserGroup('toggleStatus', userGroup.name, userGroup.id, userGroup.active)" :title="'Toggle status for ' +  userGroup.name">
+              <span :class="userGroup.active ? 'icon-check' : 'icon-cancel'"></span>
             </a>
           </li>
           <li>
-            <a href="#" @click.prevent="editNavigation('duplicate', userGroupEntry.title, userGroupEntry.id, index)" :title="'Duplicate ' +  userGroupEntry.title">
-              <span class="icon-duplicate-content"></span>
-            </a>
-          </li>
-          <li>
-            <a href="#" @click.prevent="editNavigation('delete', userGroupEntry.title, userGroupEntry.id, index)" :title="'Delete ' +  userGroupEntry.title">
+            <a href="#" @click.prevent="editUserGroup('delete', userGroup.name, userGroup.id)" :title="'Delete ' +  userGroup.name">
               <span class="icon-delete"></span>
             </a>
           </li>
@@ -38,69 +29,82 @@
 </template>
 
 <script>
-    import userGroupsData from "@/assets/data/user-groups.json"
-
-    import axios from "axios"
-
     // import vue-eventbus
     import bus from "../../../eventbus"
+    import {CmsBackendClient} from "../../../client/CmsClient";
 
     export default {
         name: "CmdEditModeGroupLevel",
         data() {
             return {
-                showSubLevel: {},
-                status: false,
-                selected: 0,
-                userGroupsData
+                allUserGroups: []
             }
         },
+        created() {
+            // reload navigation if event-bus gets event 'reload-navigation'
+            bus.on("reload-user-groups", this.loadUserGroups)
+
+            // call method and wait for resolved promise (from ajax-call) to assign response-data to data-property
+            this.loadUserGroups()
+        },
         methods: {
-            loadComponentConfig (index) {
-               this.showSubLevel[index] = !this.showSubLevel[index]
-               this.selected = index
+            loadUserGroups() {
+                return new CmsBackendClient()
+                    .loadUserGroups()
+                    .then(responseData => this.allUserGroups = responseData)
+                    .catch(error => {
+                        this.$store.commit("systemMessage", {status: "error", message: "The user groups could not be loaded!"})
+                        console.error(error)
+                    })
             },
-            editNavigation (action, title, pageId) {
+            editUserGroup (action, userGroupName, userGroupId, active) {
                 if(action === "delete") {
-                    this.deleteContent(pageId, title)
-                } else if (action === "duplicate") {
-                  this.duplicateContent(pageId)
+                    this.deleteContent(userGroupId, userGroupName)
                 } else if (action === "toggleStatus") {
-                    this.toggleStatus(pageId)
+                    this.toggleStatus(userGroupId, userGroupName, active)
+                } else if (action === "openSettings") {
+                    this.openSettings(userGroupId, userGroupName)
                 }
             },
-            deleteContent(pageId, title) {
-                if(!confirm("Die Seite " + title + " inkl. des Inhalts endgültig löschen?")) {
+            deleteContent(userGroupId, userGroupName) {
+                if(!confirm("Delete entry " + userGroupName + " completely?")) {
                   return
                 }
-                const url = new URL(`admin/pages/${this.$store.state.site.name}/${pageId}`, this.$store.state.site.api.baseUrl)
-                return axios.delete(url.href)
-                    .then(response => response.data) // get data (from backend) from (http) response
-                    .then(backendResponse => {
-                        if(backendResponse.success) {
-                            bus.on("reload-navigation", this.loadNavigationEntries)
+                new CmsBackendClient()
+                    .deleteUserGroup(userGroupId)
+                    .then(() => {
+                        this.$store.commit("systemMessage", {status: "success", message: "The user group " + userGroupName + " was deleted successfully!"})
+                    })
+                    .catch(error => {
+                        this.$store.commit("systemMessage", {status: "error", message: "The user group " + userGroupName +  " could not be deleted!"})
+                        console.error(error)
+                    })
+                    // emit event via event-bus
+                    .finally(() => bus.emit("reload-user-groups"))
+            },
+            toggleStatus(userGroupId, userGroupName, active) {
+                new CmsBackendClient()
+                    .updateUserGroupActiveState(userGroupId, !active)
+                    .then(() => {
+                        if(!active) {
+                            this.$store.commit("systemMessage", {status: "success", message: "The user group " + userGroupName +  " was activated successfully!"})
                         } else {
-                            throw new Error(backendResponse.messages)
+                            this.$store.commit("systemMessage", {status: "success", message: "The user group " + userGroupName +  " was deactivated successfully!"})
                         }
                     })
-                    .catch(error => console.error(error))
+                    .catch(error => {
+                        this.$store.commit("systemMessage", {status: "error", message: "The status for user group " + userGroupName +  " could not be toggled!"})
+                        console.error(error)
+                    })
+                    // emit event via event-bus
+                    .finally(() => bus.emit("reload-user-groups"))
             },
-            duplicateContent(pageId) {
-                const url = new URL(`admin/pages/${this.$store.state.site.name}/clone/${pageId}`, this.$store.state.site.api.baseUrl)
-                return axios.post(url.href)
-                .then(response => response.data) // get data (from backend) from (http) response
-                .then(backendResponse => {
-                    if(backendResponse.success) {
-                        this.$store.commit("systemMessage", {status: "success", systemMessage: "The content was duplicated successfully!"})
-                        bus.on("reload-navigation", this.loadNavigationEntries)
-                    } else {
-                        throw new Error(backendResponse.messages)
-                    }
+            openSettings(userGroupId, userGroupName) {
+                this.$store.commit("fancybox", { show: true, type: "usergroup"})
+                this.$store.commit("editUserGroupSettings", {
+                    id: userGroupId,
+                    name: userGroupName
                 })
-                .catch(error => console.error(error))
-            },
-            toggleStatus() {
-                this.status = !this.status
             }
         }
     }

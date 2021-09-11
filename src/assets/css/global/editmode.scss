@@ -1,3 +1,18 @@
+@mixin editmode-section-icon {
+  span {
+    font-size: 1.4rem;
+    font-weight: normal;
+    color: var(--pure-white);
+
+    &[class*="icon"] {
+      padding: .5rem .7rem .5rem .7rem;
+      background: url("../../images/hexagon.svg") no-repeat;
+      background-size: contain;
+      color: var(--primary-color);
+    }
+  }
+}
+
 .editmode {
   > .system-message {
     position: fixed;
@@ -32,14 +47,10 @@
 
         > div {
           > a {
-            border-bottom: 0;
             border: var(--default-border);
+            border-bottom: 0;
             background: none;
             transition: var(--default-transition);
-
-            > span[class*="icon"] {
-              color: var(--pure-white);
-            }
 
             &:hover, &:active, &:focus {
               background: var(--primary-color);
@@ -51,19 +62,7 @@
             }
 
             h3 {
-              span {
-                font-size: 1.4rem;
-                font-weight: normal;
-                color: var(--pure-white);
-              }
-
-              span[class*="icon"] {
-                font-size: 1.5rem;
-                padding: .4rem .6rem .4rem .6rem;
-                background: url("../../images/hexagon.svg") no-repeat;
-                background-size: contain;
-                color: var(--primary-color);
-              }
+              @include editmode-section-icon;
             }
           }
 
@@ -104,11 +103,14 @@
             color: var(--pure-white);
             padding: 1rem;
 
-            span[class*="icon"] {
-              font-size: 1.5rem;
-              padding: .4rem .6rem .4rem .6rem;
-              background: url("../../images/hexagon.svg") no-repeat;
-              background-size: contain;
+            @include editmode-section-icon;
+
+            &:hover, &:active, &:focus {
+              background: var(--primary-color);
+
+              span[class*="icon"] {
+
+              }
             }
           }
 
@@ -133,7 +135,7 @@
           display: flex;
           flex-direction: column;
 
-          > li {
+          li {
             & > div {
               display: flex;
               align-items: center;

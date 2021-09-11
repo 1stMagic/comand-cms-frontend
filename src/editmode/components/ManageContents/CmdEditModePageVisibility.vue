@@ -1,48 +1,92 @@
 <template>
-  <div class="cmd-edit-mode-manage-page-visibility">
-    <CmdFormElement labelText="This page is visible for:" element="select" @change="changeVisibilityAccess" :selectOptions="[
-    {
-      'text': 'for all users',
-      'value': 'all',
-      'selected': true
-    },
-        {
-      'text': 'for no one',
-      'value': 'noone'
-    },
-        {
-      'text': 'for specific user groups only',
-      'value': 'specific'
-    }
-    ]"/>
-  </div>
+    <div class="cmd-edit-mode-manage-page-visibility">
+        <fieldset class="flex-container">
+            <legend class="hidden">Page visibility settings</legend>
+            <div class="label">
+                <span>This page is visible for:</span>
+                <CmdFormElement labelText="For all users" name="restricted" id="restricted-none" element="input" type="radio" v-model:value="restricted" inputValue="none"/>
+                <CmdFormElement labelText="For specific group(s) only" name="restricted" id="restricted-specific" element="input" type="radio" v-model:value="restricted" inputValue="specific" />
+            </div>
+            <CmdFakeSelect v-if="restricted === 'specific'" labelText="Select user group(s)2" type="filterList" id="user-groups" v-model:value="selectedUserGroups" :selectData="allUserGroups"/>
+        </fieldset>
+        <div class="button-wrapper">
+            <button type="button" class="button" @click="savePageVisibility">
+                <span class="icon-check"></span>
+                <span>Save</span>
+            </button>
+            <button type="button" class="button" @click="cancelPageVisibility">
+                <span class="icon-cancel"></span>
+                <span>Cancel</span>
+            </button>
+        </div>
+    </div>
 </template>
 
 <script>
-// import axios from "axios"
+// import Cms-backend-client
+import {CmsBackendClient} from "../../../client/CmsClient"
 
 // import Cmd-components
+import CmdFakeSelect from "comand-component-library/src/components/CmdFakeSelect"
 import CmdFormElement from "comand-component-library/src/components/CmdFormElement"
 
 export default {
     name: "CmdEditModePageVisibility",
     components: {
+        CmdFakeSelect,
         CmdFormElement
     },
+    data() {
+        return {
+            restricted: "none",
+            selectedUserGroups: [],
+            allUserGroups: []
+        }
+    },
+    created() {
+        this.loadUserGroups()
+    },
     methods: {
-        changeVisibilityAccess() {
-            // return axios.delete()
-            // .then(response => response.data) // get data (from backend) from (http) response
-            // .then(backendResponse => {
-            //     if(backendResponse.success) {
-            //         this.$store.commit("systemMessage", {status: "success", message: "The page visibility was changed successfully!"})
-            //         bus.on("reload-navigation", this.loadNavigationEntries)
-            //     } else {
-            //         this.$store.commit("systemMessage", {status: "error", message: "The page visibility could not be changed!"})
-            //         throw new Error(backendResponse.messages)
-            //     }
-            // })
-            // .catch(error => console.error(error))
+        loadUserGroups() {
+            new CmsBackendClient()
+                .loadUserGroups()
+                .then(userGroups => this.assignUserGroups(userGroups))
+                .catch(error => {
+                    this.$store.commit("systemMessage", {status: "error", message: "User groups could not be loaded!"})
+                    console.error(error)
+                })
+        },
+        assignUserGroups(userGroups) {
+            for (let i = 0; i < userGroups.length; i++) {
+                if (userGroups[i].active) {
+                    this.allUserGroups.push({
+                        optionName: userGroups[i].name,
+                        optionValue: userGroups[i].id,
+                    })
+                }
+            }
+        },
+        setSelectedUserGroups() {
+            this.selectedUserGroups = []
+
+            if(this.$store.state.pageInformation?.restricted) {
+                this.restricted = "specific"
+                this.selectedUserGroups = this.$store.state.pageInformation.requiredGroups
+            } else {
+                this.restricted = "none"
+            }
+        },
+        savePageVisibility() {
+            alert("Save page visibility settings!")
+        },
+        cancelPageVisibility() {
+            this.setSelectedUserGroups()
+        }
+
+    },
+    watch: {
+        "$store.state.pageInformation": function() {
+            this.setSelectedUserGroups()
         }
     }
 }
