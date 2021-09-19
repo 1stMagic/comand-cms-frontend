@@ -17,7 +17,9 @@
             </template>
         </CmdSiteHeader>
         <main class="container" id="content">
+            <!-- begin content from page.vue -->
             <router-view/>
+            <!-- end content from page.vue -->
         </main>
         <CmdWidthLimitationWrapper id="site-footer" inner-component="footer">
             <CmdSwitchLanguage :languages="languagesData"/>

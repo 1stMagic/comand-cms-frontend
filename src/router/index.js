@@ -3,6 +3,8 @@ import store from "../store"
 import Error from "../layouts/Error"
 import ViewContainer from "../views/ViewContainer"
 import Page from "../views/Page"
+import CmdEditModeEditUsersPage from "../editmode/views/CmdEditModeEditUsersPage"
+import CmdEditModeEditUserDetails from "../editmode/views/CmdEditModeEditUserDetails"
 
 const routes = [
   {
@@ -15,6 +17,16 @@ const routes = [
     component: ViewContainer,
     redirect: { name: "Page" },
     children: [
+      {
+        path: "editmode/edit-users",
+        name: "CmdEditModeEditUsersPage",
+        component: CmdEditModeEditUsersPage
+      },
+      {
+        path: "editmode/edit-user-details/:userId",
+        name: "CmdEditModeEditUserDetails",
+        component: CmdEditModeEditUserDetails
+      },
       {
         path: ":page(.+)*",
         name: "Page",

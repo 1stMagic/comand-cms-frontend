@@ -4,17 +4,17 @@
             <legend class="hidden">Page visibility settings</legend>
             <div class="label">
                 <span>This page is visible for:</span>
-                <CmdFormElement labelText="For all users" name="restricted" id="restricted-none" element="input" type="radio" v-model:value="restricted" inputValue="none"/>
-                <CmdFormElement labelText="For specific group(s) only" name="restricted" id="restricted-specific" element="input" type="radio" v-model:value="restricted" inputValue="specific" />
+                <CmdFormElement labelText="For all users" name="restricted" :replaceInputType="true" id="restricted-none" element="input" type="radio" v-model:value="restricted" inputValue="none"/>
+                <CmdFormElement labelText="For specific group(s) only" name="restricted" :replaceInputType="true" id="restricted-specific" element="input" type="radio" v-model:value="restricted" inputValue="specific" />
             </div>
-            <CmdFakeSelect v-if="restricted === 'specific'" labelText="Select user group(s)2" type="filterList" id="user-groups" v-model:value="selectedUserGroups" :selectData="allUserGroups"/>
+            <CmdFakeSelect v-if="restricted === 'specific'" labelText="Select user group(s)" type="filterList" id="user-groups" v-model:value="selectedUserGroups" :selectData="allUserGroups"/>
         </fieldset>
         <div class="button-wrapper">
-            <button type="button" class="button" @click="savePageVisibility">
+            <button type="button" class="button add" @click="savePageVisibility">
                 <span class="icon-check"></span>
                 <span>Save</span>
             </button>
-            <button type="button" class="button" @click="cancelPageVisibility">
+            <button type="button" class="button cancel" @click="cancelPageVisibility">
                 <span class="icon-cancel"></span>
                 <span>Cancel</span>
             </button>

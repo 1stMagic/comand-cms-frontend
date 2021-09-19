@@ -1,6 +1,6 @@
 <template>
   <h3>Languages</h3>
-  <table>
+  <table class="cmd-edit-mode-languages">
     <thead>
       <tr>
         <th>Lang.</th>
@@ -71,3 +71,13 @@
       }
   }
 </script>
+
+<style lang="scss">
+.cmd-edit-mode-languages {
+    table {
+        img {
+            width: 3rem;
+        }
+    }
+}
+</style>

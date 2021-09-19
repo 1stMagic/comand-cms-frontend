@@ -46,11 +46,11 @@
     ]"/>
     </fieldset>
     <div class="button-wrapper">
-        <button class="button" @click="saveMetaData">
+        <button class="button add" @click="saveMetaData">
             <span class="icon-check"></span>
             <span>Save</span>
         </button>
-        <button class="button" @click="cancelMetaData">
+        <button class="button cancel" @click="cancelMetaData">
             <span class="icon-cancel"></span>
             <span>Cancel</span>
         </button>
@@ -58,9 +58,11 @@
 </template>
 
 <script>
+// import Cms-backend-client
+import {CmsBackendClient} from "../../../client/CmsClient"
+
 // import Cmd-components
 import CmdFormElement from "comand-component-library/src/components/CmdFormElement"
-import {CmsBackendClient} from "../../../client/CmsClient"
 
 export default {
     name: "CmdEditModeMeta",
@@ -108,7 +110,7 @@ export default {
             })
             .then(() => {
                 console.log("updated")
-                this.$store.commit("systemMessage", {status: "success", message: "Meta data for this page have been updated!"})
+                this.$store.commit("systemMessage", {status: "success", message: "Meta data for this page has been updated!"})
             })
             .catch(error => {
                 this.$store.commit("systemMessage", {status: "error", message: "Meta data for this page could not updated!"})

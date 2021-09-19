@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  // import axios from "axios"
+  // import edit-mode-componenents
   import CmdEditModeLanguages from "@/editmode/components/ManageSite/CmdEditModeLanguages"
   import CmdEditModeTimeAndCurrency from "@/editmode/components/ManageSite/CmdEditModeTimeAndCurrency"
 

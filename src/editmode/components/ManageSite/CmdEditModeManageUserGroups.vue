@@ -4,7 +4,6 @@
 </template>
 
 <script>
-  // import axios from "axios"
   import CmdEditModeGroupLevel from "./CmdEditModeGroupLevel"
 
   export default {

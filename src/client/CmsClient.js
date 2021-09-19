@@ -176,4 +176,14 @@ export class CmsBackendClient {
         console.log("userGroupId: " + userGroupId)
         return Promise.resolve(true)
     }
+
+    //users
+    loadUsers() {
+        return this.#client.get("backend/sites/{site}/users")
+    }
+
+    saveUserDetail(userDetail) {
+        console.log("userDetail: ", userDetail)
+        return Promise.resolve(true)
+    }
 }

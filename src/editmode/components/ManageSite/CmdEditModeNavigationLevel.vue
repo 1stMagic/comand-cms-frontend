@@ -38,7 +38,7 @@
           </li>
           <li>
             <a href="#" @click.prevent="editNavigation('delete', navigationEntry.title, navigationEntry.id)" :title="'Delete ' +  navigationEntry.title">
-              <span class="icon-delete"></span>
+              <span class="icon-delete delete"></span>
             </a>
           </li>
         </ul>
