@@ -2,7 +2,7 @@
     <aside class="cmd-edit-mode-manage-site" :class="{'closed' : !openManageSiteSidebar}">
         <div>
             <h2>Manage site</h2>
-            <CmdAccordion :accordionData="5" :gapBetween="false" :useTransition="false" ref="accordionsManageSiteSidebar" @click="openManageSiteSidebar = true">
+            <CmdAccordion :accordionData="6" :gapBetween="false" :useTransition="false" ref="accordionsManageSiteSidebar" @click="openManageSiteSidebar = true">
                 <!-- begin navigation -->
                 <template v-slot:accordionHeadline0>
                     <h3>

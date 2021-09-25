@@ -2,6 +2,7 @@ import { createApp } from "vue"
 import router from "./router"
 import store from "./store"
 import axios from "axios"
+import directiveTelephone from "./directives/telephone"
 
 /* begin import css from comand-frontend-framework */
 import "comand-frontend-framework/src/assets/css/normalize.css"
@@ -61,6 +62,10 @@ axios.get(process.env.BASE_URL + "cms-config.json")
     .then(layout => {
         /* mount vue instance to dom-element */
         const app = createApp(layout.default).use(store).use(router)
+
+        // register custom directive (with name telephone) from import (directiveTelephone) on app-instance
+        app.directive('telephone', directiveTelephone)
+
         app.mount("body")
         return app
     })

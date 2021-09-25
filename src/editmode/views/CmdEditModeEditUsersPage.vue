@@ -6,6 +6,7 @@
             <tr>
                 <th>Full name</th>
                 <th>Email</th>
+                <th>Telephone</th>
                 <th>Profile activity</th>
                 <th>Assigned groups</th>
             </tr>
@@ -20,6 +21,7 @@
                     </router-link>
                 </td>
                 <td><a :href="'mailto:' + user.email" :title="'Send email to ' + user.firstName + ' ' + user.lastName">{{ user.email }}</a></td>
+                <td><a v-telephone="user.telephone" :title="'Call ' + user.telephone">{{ user.telephone }}</a></td>
                 <td>
                     <CmdSwitchButton id="toggle-profile-activity" type="checkbox" :inputValue="user.active" onLabel="Active" offActive="Inactive" :colored="true" />
                     {{ user.active }}

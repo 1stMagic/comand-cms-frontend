@@ -3,41 +3,41 @@
         <CmdMainHeadline main-headline="Edit user details" />
         <a href="#" @click.prevent="switchToUser('prev')">Previous</a>
         <fieldset class="flex-container">
-            <legend>Details for {{ userDetail.firstName}} {{ userDetail.lastName}}</legend>
+            <legend>Details for index: {{indexOfUser}} {{ userDetail.firstName}} {{ userDetail.lastName}}</legend>
             <h2>Name</h2>
             <div class="flex-container">
                 <div class="no-flex">
                     <span class="label">Salutation:</span>
-                    <CmdFormElement element="input" type="radio" labelText="Mr." v-model:value="userDetail.salutation" />
-                    <CmdFormElement element="input" type="radio" labelText="Mrs." v-model:value="userDetail.salutation" />
+                    <CmdFormElement element="input" type="radio" labelText="Mr." v-model:value="userDetail.salutation" inputValue="mr" />
+                    <CmdFormElement element="input" type="radio" labelText="Mrs." v-model:value="userDetail.salutation" inputValue="mrs" />
                 </div>
-                <CmdFormElement element="input" type="text" labelText="Last name:" v-model:value="userDetail.lastName" required="required" />
-                <CmdFormElement element="input" type="text" labelText="First name:" v-model:value="userDetail.firstName" />
+                <CmdFormElement element="input" type="text" labelText="Last name:" v-model:value="userDetail.lastName" required="required" placeholder="Last name" />
+                <CmdFormElement element="input" type="text" labelText="First name:" v-model:value="userDetail.firstName" placeholder="First name" />
             </div>
             <h2>Contact</h2>
             <div class="flex-container">
                 <CmdFormElement element="input" type="email" labelText="Email:" v-model:value="userDetail.email" placeholder="Email" required="required" />
-                <CmdFormElement element="input" type="tel" labelText="Phone:" v-model:value="userDetail.phone" placeholder="Phone number" />
+                <CmdFormElement element="input" type="tel" labelText="Phone:" v-model:value="userDetail.telephone" placeholder="Phone number" />
+                <CmdFormElement element="input" type="tel" labelText="Phone:" v-model:value="userDetail.mobilephone" placeholder="Mobile number" />
                 <CmdFormElement element="input" type="email" labelText="Fax:" v-model:value="userDetail.fax" placeholder="Fax number" />
                 <CmdFormElement element="input" type="url" labelText="Website:" v-model:value="userDetail.website" placeholder="URL to website"  />
             </div>
             <h2>Address</h2>
             <div class="flex-container">
-                <CmdFormElement element="input" type="text" labelText="Street:" v-model:value="userDetail.street" placeholder="Street" />
-                <CmdFormElement element="input" type="text" labelText="No:" v-model:value="userDetail.number" placeholder="Number" />
+                <CmdFormElement element="input" type="text" labelText="Street/No:" v-model:value="userDetail.street" placeholder="Street" />
                 <CmdFormElement element="input" type="text" labelText="Zip:" v-model:value="userDetail.zip" placeholder="Zip" />
                 <CmdFormElement element="input" type="text" labelText="City:" v-model:value="userDetail.city" placeholder="City" />
-                <CmdFormElement element="select" labelText="Country:" :select-options="[
-                   {
-                    id: 'de',
-                    text: 'Germany'
-                    },
+                <CmdFormElement element="select" labelText="Country:" v-model:value="userDetail.country" :select-options="[
                      {
-                    id: 'uk',
+                    value: 'uk',
                     text: 'United Kingdom'
                     },
+                    {
+                    value: 'de',
+                    text: 'Germany'
+                    },
                    {
-                    id: 'fr',
+                    value: 'fr',
                     text: 'France'
                     }
                 ]" />
@@ -111,8 +111,11 @@ export default {
                     return
                 }
 
-                // assign copy of loadedUserDetail to data-property
-                this.userDetail = JSON.parse(JSON.stringify(loadedUserDetail))
+                console.log("loadedUserDetail: ", loadedUserDetail)
+
+                /* call replaceNull method to replace null by string to avoid console-error for CmdFormElement
+                 and assign to data-property (to keep method clean) */
+                this.userDetail = this.replaceNull(loadedUserDetail)
             }
         )
         .catch(error => {
@@ -145,6 +148,17 @@ export default {
                 console.error(error)
             })
         },
+        replaceNull(userData) {
+            // assign copy of loadedUserDetail to data-property
+            const userEntry = JSON.parse(JSON.stringify(userData))
+
+            for (const key in userEntry) {
+                if (userEntry[key] === null) {
+                    userEntry[key] = ""
+                }
+            }
+            return userEntry
+        },
         switchToUser(direction) {
             if(direction === 'next') {
                 if(this.indexOfUser < this.allUsers.length - 1) {
@@ -160,7 +174,9 @@ export default {
                 }
             }
 
-            this.userDetail = JSON.parse(JSON.stringify(this.allUsers[this.indexOfUser]))
+            /* call replaceNull method to replace null by string to avoid console-error for CmdFormElement
+             and assign to data-property (to keep method clean) */
+            this.userDetail = this.replaceNull(this.allUsers[this.indexOfUser])
         }
     }
 }
