@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "comand-component-library": "3.1.28",
-    "comand-frontend-framework": "^3.2.12",
+    "comand-component-library": "3.1.32",
+    "comand-frontend-framework": "^3.2.19",
     "core-js": "^3.16.1",
     "mitt": "^3.0.0",
     "vue": "^3.2.1",

@@ -127,17 +127,20 @@ export default {
             let items = this.$store.state.site.topNavigation
             let mappedItems = []
             mappedItems.push({
-                type: "href",
+                linkType: "href",
                 path: "#login",
-                linkName: "Login"
+                text: "Login",
+                icon: {}
             })
             for (let i = 0; i < items.length; i++) {
                 mappedItems.push({
-                    type: "href",
+                    linkType: "href",
                     path: items[i].href,
                     target: items[i].target,
-                    linkName: items[i].name,
-                    iconClass: items[i].iconClass
+                    text: items[i].name,
+                    icon: {
+                        iconClass: items[i].iconClass
+                    }
                 })
             }
             return mappedItems
