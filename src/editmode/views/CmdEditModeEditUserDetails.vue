@@ -43,7 +43,7 @@
                                 <CmdFormElement element="input" type="text" labelText="Zip:" v-model:value="userDetail.zip" placeholder="Zip"/>
                                 <CmdFormElement element="input" type="text" labelText="City:" v-model:value="userDetail.city" placeholder="City"/>
                             </div>
-                            <CmdFakeSelect type="country" labelText="Country:" pathFlags="@/comand-component-library/src/assets/images/flags" v-model:value="userDetail.country" :select-data='[
+                            <CmdFakeSelect type="country" labelText="Country:" pathFlags="/media/images/flags" v-model:value="userDetail.country" :select-data='[
                                 {
                                 "isoCode": "cn",
                                 "countryName": "China",
@@ -78,7 +78,7 @@
 
                 </fieldset>
                 <div class="button-wrapper">
-                    <button type="button" class="button add" @click="saveChanges()">
+                    <button type="button" class="button add" @click="updateChanges()">
                         <span class="icon-check"></span><span>Save changes</span>
                     </button>
                     <router-link :to="{ name: 'CmdEditModeEditUsersPage' }" class="button cancel">
@@ -123,42 +123,6 @@ export default {
         // get userId (= email-address) from URL-/router-parameter
         let userId = this.$route.params.userId
 
-        // load all users
-        new CmsBackendClient().loadUsers()
-            .then(responseData => {
-                    // assign all users to data-property
-                    this.allUsers = responseData
-
-                    // iterate over responseData with find()
-                    let loadedUserDetail = responseData.find((user, index) => {
-                        if (user.email === userId) {
-                            this.indexOfUser = index
-                            return true
-                        }
-                        return false
-                    })
-
-                    // check if user exists
-                    if (loadedUserDetail === undefined) {
-                        this.$store.commit("systemMessage", {status: "error", message: "User not found!"})
-
-                        // go to page edit-users
-                        this.$router.push({name: 'CmdEditModeEditUsersPage'})
-                        return
-                    }
-
-                    console.log("loadedUserDetail: ", loadedUserDetail)
-
-                    /* call replaceNull method to replace null by string to avoid console-error for CmdFormElement
-                     and assign to data-property (to keep method clean) */
-                    this.userDetail = this.replaceNull(loadedUserDetail)
-                }
-            )
-            .catch(error => {
-                this.$store.commit("systemMessage", {status: "error", message: "The users could not be loaded!"})
-                console.error(error)
-            })
-
         // load active user groups
         new CmsBackendClient().loadUserGroups()
             .then(responseData =>
@@ -169,20 +133,94 @@ export default {
                 this.$store.commit("systemMessage", {status: "error", message: "The user groups could not be loaded!"})
                 console.error(error)
             })
-    },
-    methods: {
-        saveChanges() {
-            new CmsBackendClient().saveUserDetail(this.userDetail)
-                .then(() => {
-                    this.$store.commit("systemMessage", {status: "success", message: "The changes have been saved!"})
+
+        // if userId empty set userDetail-keys to empty
+        if(!userId) {
+          this.userDetail = {
+              salutation: "mr",
+              firstName: "",
+              lastName: "",
+              groups: ["USER"],
+              email: "",
+              telephone: "",
+              mobilephone: "",
+              fax: "",
+              website: "",
+              street: "",
+              zip: "",
+              city: "",
+              country: "de"
+            }
+            return
+        }
+
+        // load all users
+        new CmsBackendClient().loadUsers()
+            .then(responseData => {
+                // assign all users to data-property
+                this.allUsers = responseData
+
+                // iterate over responseData with find()
+                let loadedUserDetail = responseData.find((user, index) => {
+                    if (user.email === userId) {
+                        this.indexOfUser = index
+                        return true
+                    }
+                    return false
+                })
+
+                // check if user exists
+                if (loadedUserDetail === undefined) {
+                    this.$store.commit("systemMessage", {status: "error", message: "User not found!"})
 
                     // go to page edit-users
                     this.$router.push({name: 'CmdEditModeEditUsersPage'})
-                })
-                .catch(error => {
-                    this.$store.commit("systemMessage", {status: "error", message: "The changes could not be saved!"})
-                    console.error(error)
-                })
+                    return
+                }
+
+                console.log("loadedUserDetail: ", loadedUserDetail)
+
+                /* call replaceNull method to replace null by string to avoid console-error for CmdFormElement
+                   and assign to data-property (to keep method clean) */
+                this.userDetail = this.replaceNull(loadedUserDetail)
+
+                // add fullName-key to userDetail (for system message-output)
+                if (this.userDetail.firstName) {
+                    this.userDetail.fullName = this.userDetail.firstName + " " + this.userDetail.lastName
+                } else {
+                    this.userDetail.fullName = this.userDetail.salutation + " " + this.userDetail.lastName
+
+                }
+            })
+            .catch(error => {
+                this.$store.commit("systemMessage", {status: "error", message: "The users could not be loaded!"})
+                console.error(error)
+            })
+    },
+    methods: {
+        updateChanges() {
+            // update current user
+            if(this.userDetail.id) {
+                new CmsBackendClient().updateUser(this.userDetail)
+                    .then(() => {
+                        this.$store.commit("systemMessage", {status: "success", message: "The user " + this.userDetail.fullName + " has been saved!"})
+                    })
+                    .catch(error => {
+                        this.$store.commit("systemMessage", {status: "error", message: "The changes for user " + this.userDetail.fullName + " could not be saved!"})
+                        console.error(error)
+                    })
+            }
+            // create new user
+            else {
+                new CmsBackendClient().createUser(this.userDetail)
+                    .then(() => {
+                        this.$store.commit("systemMessage", {status: "success", message: "The user " + this.userDetail.fullName + " has been created!"})
+                    })
+                    .catch(error => {
+                        this.$store.commit("systemMessage", {status: "error", message: "The changes for "  + this.userDetail.fullName + " could not be saved!"})
+                        console.error(error)
+                    })
+            }
         },
         replaceNull(userData) {
             // assign copy of loadedUserDetail to data-property

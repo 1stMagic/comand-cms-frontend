@@ -23,7 +23,7 @@ const routes = [
         component: CmdEditModeEditUsersPage
       },
       {
-        path: "editmode/edit-user-details/:userId",
+        path: "editmode/edit-user-details/:userId?",
         name: "CmdEditModeEditUserDetails",
         component: CmdEditModeEditUserDetails
       },

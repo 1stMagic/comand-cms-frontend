@@ -173,17 +173,36 @@ export class CmsBackendClient {
     }
 
     createUserGroup(userGroupId) {
+        // return this.#client.post("backend/sites/{site}/user-groups")
         console.log("userGroupId: " + userGroupId)
         return Promise.resolve(true)
     }
 
-    //users
+    /* begin users */
     loadUsers() {
         return this.#client.get("backend/sites/{site}/users")
     }
 
-    saveUserDetail(userDetail) {
-        console.log("userDetail: ", userDetail)
-        return Promise.resolve(true)
+    updateUser(userDetail) {
+        return this.#client.put("backend/sites/{site}/users/" + encodeURIComponent(userDetail.id), {
+            ...(userDetail || {}),
+            postalCode: userDetail.zip,
+            phone: userDetail.telephone,
+            mobile: userDetail.mobilephone
+        })
     }
+
+    createUser(userDetail) {
+        return this.#client.post("backend/sites/{site}/users", {
+            ...(userDetail || {}),
+            postalCode: userDetail.zip,
+            phone: userDetail.telephone,
+            mobile: userDetail.mobilephone
+        })
+    }
+
+    deleteUser(userDetailId) {
+        return this.#client.put("backend/sites/{site}/users/" + encodeURIComponent(userDetailId))
+    }
+    /* end users */
 }
