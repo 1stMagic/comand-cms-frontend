@@ -23,7 +23,8 @@ export default createStore({
     pageInformation: null,
     editUserGroupSettings: {
       id: "",
-      name: ""
+      name: "",
+      active: false
     }
   },
   /* update states */

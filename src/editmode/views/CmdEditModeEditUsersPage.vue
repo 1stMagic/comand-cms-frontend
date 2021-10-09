@@ -7,7 +7,7 @@
                 <th>Full name</th>
                 <th>Email</th>
                 <th>Telephone</th>
-                <th>Profile activity</th>
+                <th>Status</th>
                 <th>Assigned groups</th>
             </tr>
             </thead>
@@ -23,8 +23,14 @@
                 <td><a :href="'mailto:' + user.email" :title="'Send email to ' + user.firstName + ' ' + user.lastName">{{ user.email }}</a></td>
                 <td><a v-telephone="user.telephone" :title="'Call ' + user.telephone">{{ user.telephone }}</a></td>
                 <td>
-                    <CmdSwitchButton id="toggle-profile-activity" type="checkbox" :inputValue="user.active" onLabel="Active" offActive="Inactive" :colored="true" />
-                    {{ user.active }}
+                    <CmdSwitchButton :id="'toggle-status-' + index"
+                                     type="checkbox"
+                                     v-model:value="user.active"
+                                     onLabel="Active"
+                                     offLabel="Inactive"
+                                     :colored="true"
+                                     @update:value="toggleStatus(user)"
+                    />
                 </td>
                 <td>{{ user.groups.join(', ') }}</td>
             </tr>
@@ -41,6 +47,9 @@ import CmdWidthLimitationWrapper from "comand-component-library/src/components/C
 
 // import backend-client from cms
 import {CmsBackendClient} from "../../client/CmsClient"
+
+// import utilities
+import {fullName} from "../../utilities/user"
 
 export default {
     name: "CmdEditModeEditUsersPage",
@@ -62,6 +71,23 @@ export default {
                 this.$store.commit("systemMessage", {status: "error", message: "The list of users could not be loaded!"})
                 console.error(error)
             })
+    },
+    methods: {
+        toggleStatus(user) {
+            const userDetail = {
+                active: !user.active,
+                id: user.id
+            }
+
+            new CmsBackendClient().updateUser(userDetail)
+                .then(() => {
+                    this.$store.commit("systemMessage", {status: "success", message: "The status of user " + fullName(user) + " has been updated successfully!"})
+                })
+                .catch(error => {
+                    this.$store.commit("systemMessage", {status: "error", message: "The status of user " + fullName(user) + " could not be updated!"})
+                    console.error(error)
+                })
+        }
     }
 }
 </script>

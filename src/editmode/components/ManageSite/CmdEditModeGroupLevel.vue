@@ -8,7 +8,7 @@
         </a>
         <ul class="icon-wrapper" aria-expanded="true">
           <li>
-              <a href="#" @click.prevent="editUserGroup('openSettings', userGroup.name, userGroup.id)" :title="'Open settings for ' + userGroup.name">
+              <a href="#" @click.prevent="editUserGroup('openSettings', userGroup.name, userGroup.id, userGroup.active)" :title="'Open settings for ' + userGroup.name">
                   <span class="icon-cogs"></span>
               </a>
           </li>
@@ -59,14 +59,14 @@
             },
             editUserGroup (action, userGroupName, userGroupId, active) {
                 if(action === "delete") {
-                    this.deleteContent(userGroupId, userGroupName)
+                    this.deleteUserGroup(userGroupId, userGroupName)
                 } else if (action === "toggleStatus") {
                     this.toggleStatus(userGroupId, userGroupName, active)
                 } else if (action === "openSettings") {
-                    this.openSettings(userGroupId, userGroupName)
+                    this.openSettings(userGroupId, userGroupName, active)
                 }
             },
-            deleteContent(userGroupId, userGroupName) {
+            deleteUserGroup(userGroupId, userGroupName) {
                 if(!confirm("Delete entry " + userGroupName + " completely?")) {
                   return
                 }
@@ -82,11 +82,13 @@
                     // emit event via event-bus
                     .finally(() => bus.emit("reload-user-groups"))
             },
-            toggleStatus(userGroupId, userGroupName, active) {
+            toggleStatus(userGroupId, userGroupName, userGroupActive) {
                 new CmsBackendClient()
-                    .updateUserGroupActiveState(userGroupId, !active)
+                    .updateUserGroup(userGroupId, {
+                        active: !userGroupActive
+                    })
                     .then(() => {
-                        if(!active) {
+                        if(!userGroupActive) {
                             this.$store.commit("systemMessage", {status: "success", message: "The user group " + userGroupName +  " was activated successfully!"})
                         } else {
                             this.$store.commit("systemMessage", {status: "success", message: "The user group " + userGroupName +  " was deactivated successfully!"})
@@ -99,12 +101,13 @@
                     // emit event via event-bus
                     .finally(() => bus.emit("reload-user-groups"))
             },
-            openSettings(userGroupId, userGroupName) {
-                this.$store.commit("fancybox", { show: true, type: "usergroup"})
+            openSettings(userGroupId, userGroupName, userGroupActive) {
                 this.$store.commit("editUserGroupSettings", {
                     id: userGroupId,
-                    name: userGroupName
+                    name: userGroupName,
+                    active: userGroupActive
                 })
+                this.$store.commit("fancybox", { show: true, type: "usergroup"})
             }
         }
     }

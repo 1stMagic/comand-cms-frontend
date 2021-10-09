@@ -12,7 +12,7 @@
         </ul>
         -->
         <router-link :to="{ name: 'CmdEditModeEditUserDetails' }" class="button add">
-            <span class="icon-create-user"></span><span>Create user</span>
+            <span class="icon-add-user"></span><span>Create user</span>
         </router-link>
     </div>
 </template>

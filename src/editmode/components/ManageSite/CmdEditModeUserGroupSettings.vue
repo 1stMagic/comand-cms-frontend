@@ -6,6 +6,7 @@
         <dd v-if="$store.state.editUserGroupSettings.id">{{ $store.state.editUserGroupSettings.id }}</dd>
         <dd v-else>-</dd>
     </dl>
+    <CmdSwitchButton type="checkbox" labelText="Is active" v-model:value="userGroupActive" id="user-group" />
     <CmdFormElement element="input"
                 type="text"
                 required="required"
@@ -22,6 +23,7 @@
 
 <script>
 import CmdFormElement from "comand-component-library/src/components/CmdFormElement"
+import CmdSwitchButton from "comand-component-library/src/components/CmdSwitchButton"
 import {CmsBackendClient} from "../../../client/CmsClient"
 import bus from "../../../eventbus"
 
@@ -30,13 +32,16 @@ export default {
   data() {
     return {
         userGroupName: "",
+        userGroupActive: false
     }
   },
   components: {
-    CmdFormElement
+    CmdFormElement,
+    CmdSwitchButton
   },
   created() {
     this.userGroupName = this.$store.state.editUserGroupSettings.name
+    this.userGroupActive = this.$store.state.editUserGroupSettings.active
   },
   methods: {
     saveSettings() {
@@ -46,14 +51,14 @@ export default {
         if(userGroupId) {
         // update settings
         saveResponse = new CmsBackendClient().updateUserGroup(userGroupId, {
-          userGroupName: {
-            [this.$store.state.language]: this.userGroupName
-          }
+          name: this.userGroupName,
+          active: this.userGroupActive
         })
       } else {
         // add new settings
         saveResponse = new CmsBackendClient().createUserGroup(this.userGroupName)
       }
+
       saveResponse.then(() => {
           if(userGroupId) {
               this.$store.commit("systemMessage", {status: "success", message: "The user group " + this.userGroupName + " was updated successfully!"})

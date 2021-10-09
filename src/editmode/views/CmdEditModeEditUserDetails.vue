@@ -2,37 +2,47 @@
     <CmdWidthLimitationWrapper>
         <CmdMainHeadline main-headline="Edit user details"/>
         <div class="flex-container no-gap" id="user-details">
-            <CmdSlideButton @click.prevent="switchToUser('prev')"></CmdSlideButton>
+            <CmdSlideButton @click.prevent="switchToUser('prev')" slideButtonType="prev"></CmdSlideButton>
             <div class="flex-container vertical">
                 <fieldset class="flex-container">
-                    <legend>Details for user: {{ userDetail.firstName }} {{ userDetail.lastName }}</legend>
+                    <!--
+                    <legend v-if="$route.params.userId">Details for user: {{ fullName() }}</legend>
+                    <legend v-else>Details for new user</legend>
+                    -->
                     <div class="flex-container">
                         <div class="flex-container vertical">
                             <h2>Name</h2>
-                            <div class="no-flex">
-                                <span class="label">Salutation:</span>
-                                <div class="flex-container no-flex">
-                                    <CmdFormElement element="input" type="radio" labelText="Mr." v-model:value="userDetail.salutation" inputValue="mr"/>
-                                    <CmdFormElement element="input" type="radio" labelText="Mrs." v-model:value="userDetail.salutation" inputValue="mrs"/>
+                            <div class="flex-container">
+                                <div class="label no-flex">
+                                    <span>Salutation:</span>
+                                    <span class="flex-container no-flex">
+                                        <CmdFormElement element="input" type="radio" :replace-input-type="true" labelText="Mr." v-model:value="userDetail.salutation" inputValue="mr"/>
+                                        <CmdFormElement element="input" type="radio" :replace-input-type="true" labelText="Mrs." v-model:value="userDetail.salutation" inputValue="mrs"/>
+                                    </span>
                                 </div>
+                                <CmdFormElement element="input" type="text" labelText="First name:" v-model:value="userDetail.firstName" placeholder="First name"/>
+                                <CmdFormElement element="input" type="text" labelText="Last name:" v-model:value="userDetail.lastName" required="required" placeholder="Last name"/>
                             </div>
-                            <CmdFormElement element="input" type="text" labelText="Last name:" v-model:value="userDetail.lastName" required="required" placeholder="Last name"/>
-                            <CmdFormElement element="input" type="text" labelText="First name:" v-model:value="userDetail.firstName" placeholder="First name"/>
                         </div>
                         <div class="flex-container vertical">
-                            <h2>Assigned groups</h2>
-                            <template v-for="(group, index) in userGroups" :key="index">
-                                <CmdFormElement element="input" type="checkbox" :labelText="group.name" :inputValue="group.id" v-model:value="userDetail.groups"/>
-                            </template>
+                            <h2>Groups</h2>
+                            <div class="label">
+                                <span>Assigned groups:</span>
+                                <span class="flex-container no-flex">
+                                    <template v-for="(group, index) in userGroups" :key="index">
+                                        <CmdFormElement element="input" type="checkbox" :replace-input-type="true" :labelText="group.name" :inputValue="group.id" v-model:value="userDetail.groups"/>
+                                    </template>
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <hr/>
                     <div class="flex-container">
                         <div class="flex-container vertical">
                             <h2>Contact</h2>
-                            <CmdFormElement element="input" type="email" labelText="Email:" v-model:value="userDetail.email" placeholder="Email" required="required"/>
-                            <CmdFormElement element="input" type="tel" labelText="Telephone:" v-model:value="userDetail.telephone" placeholder="Phone number"/>
-                            <CmdFormElement element="input" type="tel" labelText="Mobile phone:" v-model:value="userDetail.mobilephone" placeholder="Mobile number"/>
+                            <CmdFormElement element="input" type="email" labelText="Email address:" v-model:value="userDetail.email" placeholder="Email address" required="required"/>
+                            <CmdFormElement element="input" type="tel" labelText="Telephone:" v-model:value="userDetail.telephone" placeholder="Telephone number"/>
+                            <CmdFormElement element="input" type="tel" labelText="Mobile phone:" v-model:value="userDetail.mobilephone" placeholder="Mobile phone number"/>
                             <CmdFormElement element="input" type="email" labelText="Fax:" v-model:value="userDetail.fax" placeholder="Fax number"/>
                             <CmdFormElement element="input" type="url" labelText="Website:" v-model:value="userDetail.website" placeholder="URL to website"/>
                         </div>
@@ -75,7 +85,6 @@
                             ]'/>
                         </div>
                     </div>
-
                 </fieldset>
                 <div class="button-wrapper">
                     <button type="button" class="button add" @click="updateChanges()">
@@ -84,9 +93,12 @@
                     <router-link :to="{ name: 'CmdEditModeEditUsersPage' }" class="button cancel">
                         <span class="icon-cancel"></span><span>Cancel changes</span>
                     </router-link>
+                    <button type="button" class="button delete" @click="deleteUser()">
+                        <span class="icon-remove-user"></span><span>Delete user</span>
+                    </button>
                 </div>
             </div>
-            <CmdSlideButton @click.prevent="switchToUser('next')"></CmdSlideButton>
+            <CmdSlideButton @click.prevent="switchToUser('next')" :slideButtons="nextUser"></CmdSlideButton>
         </div>
     </CmdWidthLimitationWrapper>
 </template>
@@ -101,6 +113,9 @@ import CmdWidthLimitationWrapper from "comand-component-library/src/components/C
 
 // import backend-client from cms
 import {CmsBackendClient} from "../../client/CmsClient"
+
+// import utilities
+import {fullName} from "../../utilities/user"
 
 export default {
     name: "CmdEditModeEditUserDetails",
@@ -119,6 +134,16 @@ export default {
         CmdSlideButton,
         CmdWidthLimitationWrapper,
     },
+    computed: {
+        nextUser() {
+            return {
+                next: {
+                    iconClass: "icon-single-arrow-right",
+                    tooltip: "Next User" + fullName(this.allUsers[this.indexOfUser + 1])
+                }
+            }
+        }
+    },
     created() {
         // get userId (= email-address) from URL-/router-parameter
         let userId = this.$route.params.userId
@@ -134,23 +159,9 @@ export default {
                 console.error(error)
             })
 
-        // if userId empty set userDetail-keys to empty
-        if(!userId) {
-          this.userDetail = {
-              salutation: "mr",
-              firstName: "",
-              lastName: "",
-              groups: ["USER"],
-              email: "",
-              telephone: "",
-              mobilephone: "",
-              fax: "",
-              website: "",
-              street: "",
-              zip: "",
-              city: "",
-              country: "de"
-            }
+        // if no userId exists, reset all fields (to create new user)
+        if (!userId) {
+            this.resetUserData()
             return
         }
 
@@ -183,14 +194,6 @@ export default {
                 /* call replaceNull method to replace null by string to avoid console-error for CmdFormElement
                    and assign to data-property (to keep method clean) */
                 this.userDetail = this.replaceNull(loadedUserDetail)
-
-                // add fullName-key to userDetail (for system message-output)
-                if (this.userDetail.firstName) {
-                    this.userDetail.fullName = this.userDetail.firstName + " " + this.userDetail.lastName
-                } else {
-                    this.userDetail.fullName = this.userDetail.salutation + " " + this.userDetail.lastName
-
-                }
             })
             .catch(error => {
                 this.$store.commit("systemMessage", {status: "error", message: "The users could not be loaded!"})
@@ -198,29 +201,63 @@ export default {
             })
     },
     methods: {
+        resetUserData() {
+            // if userId empty set userDetail-keys to empty
+            this.userDetail = {
+                salutation: "mr",
+                firstName: "",
+                lastName: "",
+                groups: ["USER"],
+                email: "",
+                telephone: "",
+                mobilephone: "",
+                fax: "",
+                website: "",
+                street: "",
+                zip: "",
+                city: "",
+                country: "de"
+            }
+        },
         updateChanges() {
             // update current user
-            if(this.userDetail.id) {
+            if (this.userDetail.id) {
                 new CmsBackendClient().updateUser(this.userDetail)
                     .then(() => {
-                        this.$store.commit("systemMessage", {status: "success", message: "The user " + this.userDetail.fullName + " has been saved!"})
+                        this.$store.commit("systemMessage", {status: "success", message: "The user " + fullName(this.userDetail) + " has been saved!"})
                     })
                     .catch(error => {
-                        this.$store.commit("systemMessage", {status: "error", message: "The changes for user " + this.userDetail.fullName + " could not be saved!"})
+                        this.$store.commit("systemMessage", {status: "error", message: "The changes for user " + fullName(this.userDetail) + " could not be saved!"})
                         console.error(error)
                     })
             }
+
             // create new user
             else {
                 new CmsBackendClient().createUser(this.userDetail)
                     .then(() => {
-                        this.$store.commit("systemMessage", {status: "success", message: "The user " + this.userDetail.fullName + " has been created!"})
+                        this.$store.commit("systemMessage", {status: "success", message: "The user " + this.userDetail.fullName() + " has been created!"})
                     })
                     .catch(error => {
-                        this.$store.commit("systemMessage", {status: "error", message: "The changes for "  + this.userDetail.fullName + " could not be saved!"})
+                        this.$store.commit("systemMessage", {status: "error", message: "The changes for " + this.userDetail.fullName() + " could not be saved!"})
                         console.error(error)
                     })
             }
+        },
+        deleteUser() {
+            if (!confirm("Delete profile of " + this.userDetail.fullName() + " completely?")) {
+                return
+            }
+
+            new CmsBackendClient().deleteUser(this.userDetail.id)
+                .then(() => {
+                    this.$store.commit("systemMessage", {status: "success", message: "The user " + this.userDetail.fullName() + " has been deleted successfully!"})
+                    this.$router.push({name: 'CmdEditModeEditUsersPage'})
+                })
+                .catch(error => {
+                    this.$store.commit("systemMessage", {status: "error", message: "The changes for user " + this.userDetail.fullName() + " could not be deleted!"})
+                    console.error(error)
+                })
         },
         replaceNull(userData) {
             // assign copy of loadedUserDetail to data-property
@@ -252,15 +289,21 @@ export default {
              and assign to data-property (to keep method clean) */
             this.userDetail = this.replaceNull(this.allUsers[this.indexOfUser])
         }
+    },
+    watch: {
+        $route() {
+            if (!this.$route.params.userId) {
+                this.resetUserData()
+            }
+        }
     }
 }
 </script>
 
 <style lang="scss">
 #user-details {
-    .cmd-slide-button.button.next {
+    .cmd-slide-button {
         position: relative;
     }
 }
-
 </style>

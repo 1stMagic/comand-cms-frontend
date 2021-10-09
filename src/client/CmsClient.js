@@ -99,15 +99,15 @@ export class CmsBackendClient {
     }
 
     createTopNavigationPage(title, afterPageId = null, parentId = null) {
-        return this.createPage(title, { showInTopNavigation: true }, afterPageId, parentId)
+        return this.createPage(title, {showInTopNavigation: true}, afterPageId, parentId)
     }
 
     createMainNavigationPage(title, afterPageId = null, parentId = null) {
-        return this.createPage(title, { showInMainNavigation: true }, afterPageId, parentId)
+        return this.createPage(title, {showInMainNavigation: true}, afterPageId, parentId)
     }
 
     createFooterNavigationPage(title, afterPageId = null, parentId = null) {
-        return this.createPage(title, { showInFooterNavigation: true }, afterPageId, parentId)
+        return this.createPage(title, {showInFooterNavigation: true}, afterPageId, parentId)
     }
 
     createPage(title, data, afterPageId = null, parentId = null) {
@@ -152,44 +152,65 @@ export class CmsBackendClient {
         return this.#client.get(`backend/pages/{site}/${encodeURIComponent(pageId)}`)
     }
 
-    //user groups
+    //user groups -----------------------------------------------------------------------
     loadUserGroups() {
         return this.#client.get("backend/sites/{site}/user-groups")
     }
 
-    updateUserGroupActiveState(userGroupId, active) {
-        console.log("userGroupId: " + userGroupId + "\nactive: " + active)
-        return Promise.resolve(true)
-    }
-
     deleteUserGroup(userGroupId) {
-        console.log("userGroupId: " + userGroupId)
-        return Promise.resolve(true)
+        return this.#client.delete("backend/sites/{site}/user-groups/" + encodeURIComponent(userGroupId))
     }
 
-    updateUserGroup(userGroupId) {
-        console.log("userGroupId: " + userGroupId)
-        return Promise.resolve(true)
+    updateUserGroup(userGroupId, userGroup) {
+        const userGroupData = {}
+        // check is userGroup name exists
+        if (userGroup.name) {
+            userGroupData.name =
+                {
+                    [store.state.language]: userGroup.name
+                }
+        }
+
+        // check is userGroup active-status is set
+        if (userGroup.active !== undefined) {
+            userGroupData.active = userGroup.active
+        }
+        return this.#client.put("backend/sites/{site}/user-groups/" + encodeURIComponent(userGroupId), userGroupData)
     }
 
-    createUserGroup(userGroupId) {
-        // return this.#client.post("backend/sites/{site}/user-groups")
-        console.log("userGroupId: " + userGroupId)
-        return Promise.resolve(true)
+    createUserGroup(userGroupName) {
+        const userGroupData = {}
+
+        userGroupData.name =
+            {
+                [store.state.language]: userGroupName
+            }
+        return this.#client.post("backend/sites/{site}/user-groups", userGroupData)
     }
 
-    /* begin users */
+    /* begin users ----------------------------------------------------------------------- */
     loadUsers() {
         return this.#client.get("backend/sites/{site}/users")
     }
 
     updateUser(userDetail) {
-        return this.#client.put("backend/sites/{site}/users/" + encodeURIComponent(userDetail.id), {
-            ...(userDetail || {}),
-            postalCode: userDetail.zip,
-            phone: userDetail.telephone,
-            mobile: userDetail.mobilephone
-        })
+        // assign all entries of userDetail-object to new object 'userData'
+        const userData = {
+            ...(userDetail || {})
+        }
+
+        // assign further values to userData-object if exist
+        if(userDetail.zip !== undefined) {
+            userData.postalCode = userDetail.zip
+        }
+        if(userDetail.telephone !== undefined) {
+            userData.phone = userDetail.telephone
+        }
+        if(userDetail.mobilephone !== undefined) {
+            userData.mobile = userDetail.mobilephone
+        }
+
+        return this.#client.put("backend/sites/{site}/users/" + encodeURIComponent(userDetail.id), userData)
     }
 
     createUser(userDetail) {
@@ -202,7 +223,8 @@ export class CmsBackendClient {
     }
 
     deleteUser(userDetailId) {
-        return this.#client.put("backend/sites/{site}/users/" + encodeURIComponent(userDetailId))
+        return this.#client.delete("backend/sites/{site}/users/" + encodeURIComponent(userDetailId))
     }
+
     /* end users */
 }

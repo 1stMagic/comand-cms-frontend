@@ -405,7 +405,7 @@
     }
   }
 
-  button, &.button, a > span {
+  button, .button, a > span {
     &.add {
       background: var(--success-color);
       border-color: var(--success-color);
