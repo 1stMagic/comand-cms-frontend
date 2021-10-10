@@ -2,7 +2,7 @@
     <CmdWidthLimitationWrapper>
         <CmdMainHeadline main-headline="Edit user details"/>
         <div class="flex-container no-gap" id="user-details">
-            <CmdSlideButton @click.prevent="switchToUser('prev')" slideButtonType="prev"></CmdSlideButton>
+            <CmdSlideButton @click.prevent="switchToUser('prev')" slideButtonType="prev" :slideButtons="previousUser"></CmdSlideButton>
             <div class="flex-container vertical">
                 <fieldset class="flex-container">
                     <!--
@@ -135,14 +135,36 @@ export default {
         CmdWidthLimitationWrapper,
     },
     computed: {
+        previousUser() {
+            return {
+                prev: {
+                    iconClass: "icon-single-arrow-left",
+                    tooltip: "Previous User (#" + this.indexOfUser - 1 + ")"
+                }
+            }
+        },
         nextUser() {
             return {
                 next: {
                     iconClass: "icon-single-arrow-right",
-                    tooltip: "Next User" + fullName(this.allUsers[this.indexOfUser + 1])
+                    tooltip: "Next User (#" + this.indexOfUser + 1 + ")"
                 }
             }
         }
+        /*
+        if (direction === 'next') {
+            if (this.indexOfUser < this.allUsers.length - 1) {
+                this.indexOfUser++
+            } else {
+                this.indexOfUser = 0
+            }
+        } else {
+            if (this.indexOfUser > 0) {
+                this.indexOfUser--
+            } else {
+                this.indexOfUser = this.allUsers.length - 1
+            }
+        }*/
     },
     created() {
         // get userId (= email-address) from URL-/router-parameter
