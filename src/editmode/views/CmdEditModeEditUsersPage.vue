@@ -76,7 +76,7 @@ export default {
     methods: {
         toggleStatus(user) {
             const userDetail = {
-                active: !user.active,
+                active: user.active,
                 id: user.id
             }
 

@@ -2,7 +2,6 @@ import { createApp } from "vue"
 import router from "./router"
 import store from "./store"
 import axios from "axios"
-import directiveTelephone from "./directives/telephone"
 
 /* begin import css from comand-frontend-framework */
 import "comand-frontend-framework/src/assets/css/normalize.css"
@@ -63,14 +62,16 @@ axios.get(process.env.BASE_URL + "cms-config.json")
         /* mount vue instance to dom-element */
         const app = createApp(layout.default).use(store).use(router)
 
-        // register custom directive (with name telephone) from import (directiveTelephone) on app-instance
-        app.directive('telephone', directiveTelephone)
+        /* iterate over all export from component-library and check exported name-prefix to differ between components and directives to register them correctly on app-instance */
+        Object.entries(componentLibraryComponents).forEach(([name, exports]) => {
+                if (name.startsWith("Cmd")) {
+                    app.component(name, exports)
+                } else {
+                    app.directive(name.slice(3).toLowerCase(), exports)
+                }
+            }
+        )
 
         app.mount("body")
-        return app
-    })
-    .then(app => {
-        //Object.entries(componentLibraryComponents).forEach(([name]) => console.log("Comp: " + name))
-        Object.entries(componentLibraryComponents).forEach(([name, component]) => app.component(name, component))
         return app
     })

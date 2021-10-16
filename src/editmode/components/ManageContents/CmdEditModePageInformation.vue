@@ -28,9 +28,9 @@ export default {
             new CmsBackendClient().loadPage(this.$store.state.editPageSettings.pageId)
                 .then(response => {
                     this.pageModifications.push(
-                        { label: "Created:", data: (response.modification.created) },
+                        { label: "Created:", data: (response.modification.createdFormatted) },
                         { label: "Created by:", data: response.modification.createdBy },
-                        { label: "Last modified:", data: response.modification.lastModified },
+                        { label: "Last modified:", data: response.modification.lastModifiedFormatted },
                         { label: "Last modified by:", data: response.modification.lastModifiedBy }
                     )
                 })

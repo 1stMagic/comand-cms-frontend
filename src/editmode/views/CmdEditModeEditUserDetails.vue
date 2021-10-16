@@ -2,7 +2,7 @@
     <CmdWidthLimitationWrapper>
         <CmdMainHeadline main-headline="Edit user details"/>
         <div class="flex-container no-gap" id="user-details">
-            <CmdSlideButton @click.prevent="switchToUser('prev')" slideButtonType="prev" :slideButtons="previousUser"></CmdSlideButton>
+            <CmdSlideButton v-if="allUsers.length" @click.prevent="switchToUser('prev')" slideButtonType="prev" :slideButtons="previousUser"></CmdSlideButton>
             <div class="flex-container vertical">
                 <fieldset class="flex-container">
                     <!--
@@ -25,8 +25,22 @@
                                 <CmdFormElement element="input" type="text" labelText="Last name:" v-model:value="userDetail.lastName" required="required" placeholder="Last name"/>
                             </div>
                             <div class="flex-container">
-                                <CmdFormElement element="input" type="password" inner-icon-class="icon-security-settings" labelText="Password:" v-model:value="userDetail.firstName" required="required" placeholder="Password"/>
-                                <CmdFormElement element="input" type="password" inner-icon-class="icon-security-settings" labelText="Repeat password:" v-model:value="userDetail.lastName" required="required" placeholder="Repeat password"/>
+                                <CmdFormElement element="input"
+                                                type="password"
+                                                inner-icon-class="icon-security-settings"
+                                                labelText="Password:"
+                                                v-model:value="password"
+                                                required="required"
+                                                placeholder="Password"/>
+                                <CmdFormElement element="input"
+                                                id="repeat-password"
+                                                type="password"
+                                                inner-icon-class="icon-security-settings"
+                                                labelText="Repeat password:"
+                                                v-model:value="passwordRepeat"
+                                                @blur="blurRepeatPassword"
+                                                required="required"
+                                                placeholder="Repeat password"/>
                             </div>
                         </div>
                         <div class="flex-container vertical">
@@ -67,12 +81,13 @@
                                 </span>
                             </div>
                             <h3>Status</h3>
-                            <div class="label">
+                            <div class="label inline">
                                 <span>Current profile status:</span>
                                 <CmdSwitchButton :id="'toggle-status-' + index"
                                                  type="checkbox"
                                                  onLabel="Active"
                                                  offLabel="Inactive"
+                                                 v-model:value="userDetail.active"
                                                  :colored="true"
                                 />
                             </div>
@@ -86,7 +101,7 @@
                             <CmdFormElement element="input" type="tel" inner-icon-class="icon-phone" labelText="Telephone:" v-model:value="userDetail.telephone" placeholder="Telephone number"/>
                             <CmdFormElement element="input" type="tel" inner-icon-class="icon-device-smartphone" labelText="Mobile phone:" v-model:value="userDetail.mobilephone" placeholder="Mobile phone number"/>
                             <CmdFormElement element="input" type="email" inner-icon-class="icon-fax" labelText="Fax:" v-model:value="userDetail.fax" placeholder="Fax number"/>
-                            <CmdFormElement element="input" type="url" inner-icon-class="icon-globe" abelText="Website:" v-model:value="userDetail.website" placeholder="URL to website"/>
+                            <CmdFormElement element="input" type="url" inner-icon-class="icon-globe" labelText="Website:" v-model:value="userDetail.website" placeholder="URL to website"/>
                         </div>
                         <div class="flex-container vertical">
                             <h2>Address</h2>
@@ -137,7 +152,7 @@
                     <router-link :to="{ name: 'CmdEditModeEditUsersPage' }" class="button cancel">
                         <span class="icon-cancel"></span><span>Cancel changes</span>
                     </router-link>
-                    <button type="button" class="button delete" @click="deleteUser()">
+                    <button type="button" :class="['button delete', {'disabled': !this.$route.params.userId}]" :disabled="!this.$route.params.userId" @click="deleteUser()">
                         <span class="icon-remove-user"></span><span>Delete user</span>
                     </button>
                     <router-link :to="{ name: 'CmdEditModeEditUsersPage' }" class="button">
@@ -145,7 +160,7 @@
                     </router-link>
                 </div>
             </div>
-            <CmdSlideButton @click.prevent="switchToUser('next')" :slideButtons="nextUser"></CmdSlideButton>
+            <CmdSlideButton v-if="allUsers.length" @click.prevent="switchToUser('next')" :slideButtons="nextUser"></CmdSlideButton>
         </div>
     </CmdWidthLimitationWrapper>
 </template>
@@ -172,7 +187,9 @@ export default {
             userDetail: {},
             userGroups: [],
             allUsers: [],
-            indexOfUser: 0
+            indexOfUser: 0,
+            password: "",
+            passwordRepeat: ""
         }
     },
     components: {
@@ -185,35 +202,34 @@ export default {
     },
     computed: {
         previousUser() {
+            let userNumber = 0
+            if(this.indexOfUser === 0) {
+                userNumber = this.allUsers.length
+            } else {
+                userNumber = this.indexOfUser
+            }
             return {
                 prev: {
                     iconClass: "icon-single-arrow-left",
-                    tooltip: "Previous User (#" + this.indexOfUser - 1 + ")"
+                    tooltip: "Previous user (#" + userNumber + "/" + this.allUsers.length + ")"
                 }
             }
         },
         nextUser() {
+            let userNumber = 0
+            if(this.indexOfUser + 1 === this.allUsers.length) {
+                userNumber = 1
+            } else {
+                userNumber = this.indexOfUser + 2
+            }
             return {
                 next: {
                     iconClass: "icon-single-arrow-right",
-                    tooltip: "Next User (#" + this.indexOfUser + 1 + ")"
+                    tooltip: "Next user (#" + userNumber + "/" + this.allUsers.length + ")"
                 }
             }
         }
-        /*
-        if (direction === 'next') {
-            if (this.indexOfUser < this.allUsers.length - 1) {
-                this.indexOfUser++
-            } else {
-                this.indexOfUser = 0
-            }
-        } else {
-            if (this.indexOfUser > 0) {
-                this.indexOfUser--
-            } else {
-                this.indexOfUser = this.allUsers.length - 1
-            }
-        }*/
+
     },
     created() {
         // get userId (= email-address) from URL-/router-parameter
@@ -272,6 +288,17 @@ export default {
             })
     },
     methods: {
+        blurRepeatPassword() {
+            this.checkPasswords()
+        },
+        checkPasswords() {
+            if(this.password !== this.passwordRepeat) {
+                this.$store.commit("systemMessage", {status: "error", message: "Passwords do not match!"})
+                document.querySelector("#repeat-password").focus()
+                return false
+            }
+            return true
+        },
         resetUserData() {
             // if userId empty set userDetail-keys to empty
             this.userDetail = {
@@ -287,10 +314,20 @@ export default {
                 street: "",
                 zip: "",
                 city: "",
-                country: "de"
+                country: "de",
+                active: false
             }
+
+            // password will not be send with userDetail-information from backend
+            this.password = ""
+            this.passwordRepeat = ""
         },
         updateChanges() {
+            // check if checkPassword renturs true (else return)
+            if(!this.checkPasswords()) {
+                return
+            }
+
             // update current user
             if (this.userDetail.id) {
                 new CmsBackendClient().updateUser(this.userDetail)
@@ -307,26 +344,26 @@ export default {
             else {
                 new CmsBackendClient().createUser(this.userDetail)
                     .then(() => {
-                        this.$store.commit("systemMessage", {status: "success", message: "The user " + this.userDetail.fullName() + " has been created!"})
+                        this.$store.commit("systemMessage", {status: "success", message: "The user " + fullName(this.userDetail) + " has been created!"})
                     })
                     .catch(error => {
-                        this.$store.commit("systemMessage", {status: "error", message: "The changes for " + this.userDetail.fullName() + " could not be saved!"})
+                        this.$store.commit("systemMessage", {status: "error", message: "The changes for " + fullName(this.userDetail) + " could not be saved!"})
                         console.error(error)
                     })
             }
         },
         deleteUser() {
-            if (!confirm("Delete profile of " + this.userDetail.fullName() + " completely?")) {
+            if (!confirm("Delete profile of " + fullName(this.userDetail) + " completely?")) {
                 return
             }
 
             new CmsBackendClient().deleteUser(this.userDetail.id)
                 .then(() => {
-                    this.$store.commit("systemMessage", {status: "success", message: "The user " + this.userDetail.fullName() + " has been deleted successfully!"})
+                    this.$store.commit("systemMessage", {status: "success", message: "The user " + fullName(this.userDetail) + " has been deleted successfully!"})
                     this.$router.push({name: 'CmdEditModeEditUsersPage'})
                 })
                 .catch(error => {
-                    this.$store.commit("systemMessage", {status: "error", message: "The changes for user " + this.userDetail.fullName() + " could not be deleted!"})
+                    this.$store.commit("systemMessage", {status: "error", message: "The changes for user " + fullName(this.userDetail) + " could not be deleted!"})
                     console.error(error)
                 })
         },
@@ -365,6 +402,7 @@ export default {
         $route() {
             if (!this.$route.params.userId) {
                 this.resetUserData()
+                this.allUsers = []
             }
         }
     }
