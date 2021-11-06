@@ -7,7 +7,7 @@
                 <CmdFormElement labelText="For all users" name="restricted" :replaceInputType="true" id="restricted-none" element="input" type="radio" v-model:value="restricted" inputValue="none"/>
                 <CmdFormElement labelText="For specific group(s) only" name="restricted" :replaceInputType="true" id="restricted-specific" element="input" type="radio" v-model:value="restricted" inputValue="specific" />
             </div>
-            <CmdFakeSelect v-if="restricted === 'specific'" labelText="Select user group(s)" type="filterList" id="user-groups" v-model:value="selectedUserGroups" :selectData="allUserGroups"/>
+            <CmdFakeSelect v-if="restricted === 'specific'" labelText="Select user group(s):" type="checkboxOptions" id="user-groups" v-model:value="selectedUserGroups" :selectData="userGroups"/>
         </fieldset>
         <div class="button-wrapper">
             <button type="button" class="button add" @click="savePageVisibility">
@@ -23,9 +23,6 @@
 </template>
 
 <script>
-// import Cms-backend-client
-import {CmsBackendClient} from "../../../client/CmsClient"
-
 // import Cmd-components
 import CmdFakeSelect from "comand-component-library/src/components/CmdFakeSelect"
 import CmdFormElement from "comand-component-library/src/components/CmdFormElement"
@@ -40,32 +37,20 @@ export default {
         return {
             restricted: "none",
             selectedUserGroups: [],
-            allUserGroups: []
         }
     },
-    created() {
-        this.loadUserGroups()
+    computed: {
+        userGroups() {
+            // load all user-groups from store and filter for active ones. map each group object to expected object.structure for FakeSelect-component
+            return this.$store.state.userGroups.filter(userGroup => userGroup.active).map( userGroup => {
+                return {
+                        text: userGroup.name,
+                        value: userGroup.id,
+                }
+            })
+        }
     },
     methods: {
-        loadUserGroups() {
-            new CmsBackendClient()
-                .loadUserGroups()
-                .then(userGroups => this.assignUserGroups(userGroups))
-                .catch(error => {
-                    this.$store.commit("systemMessage", {status: "error", message: "User groups could not be loaded!"})
-                    console.error(error)
-                })
-        },
-        assignUserGroups(userGroups) {
-            for (let i = 0; i < userGroups.length; i++) {
-                if (userGroups[i].active) {
-                    this.allUserGroups.push({
-                        optionName: userGroups[i].name,
-                        optionValue: userGroups[i].id,
-                    })
-                }
-            }
-        },
         setSelectedUserGroups() {
             this.selectedUserGroups = []
 

@@ -1,6 +1,6 @@
 <template>
   <ul class="cmd-edit-mode-group-level">
-    <li v-for="(userGroup, index) in allUserGroups" :key="index">
+    <li v-for="(userGroup, index) in userGroups" :key="index">
       <div :class="userGroup.active ? 'active' : 'inactive'">
         <a href="#"
            @click.prevent>
@@ -13,12 +13,12 @@
               </a>
           </li>
           <li class="status">
-            <a href="#" @click.prevent="editUserGroup('toggleStatus', userGroup.name, userGroup.id, userGroup.active)" :title="'Toggle status for ' +  userGroup.name">
+            <a href="#" @click.prevent="editUserGroup('toggleStatus', userGroup.name, userGroup.id, userGroup.active)" :title="'Toggle status for ' + userGroup.name">
               <span :class="userGroup.active ? 'icon-check' : 'icon-cancel'"></span>
             </a>
           </li>
           <li>
-            <a href="#" @click.prevent="editUserGroup('delete', userGroup.name, userGroup.id)" :title="'Delete ' +  userGroup.name">
+            <a href="#" @click.prevent="editUserGroup('delete', userGroup.name, userGroup.id)" :title="'Delete ' + userGroup.name">
               <span class="icon-delete"></span>
             </a>
           </li>
@@ -35,28 +35,16 @@
 
     export default {
         name: "CmdEditModeGroupLevel",
-        data() {
-            return {
-                allUserGroups: []
+        created() {
+            // reload user-groups if event-bus gets event 'reload-user-groups'
+            bus.on("reload-user-groups", () => this.$store.dispatch("loadUserGroups"))
+        },
+        computed: {
+            userGroups() {
+                return this.$store.state.userGroups
             }
         },
-        created() {
-            // reload navigation if event-bus gets event 'reload-navigation'
-            bus.on("reload-user-groups", this.loadUserGroups)
-
-            // call method and wait for resolved promise (from ajax-call) to assign response-data to data-property
-            this.loadUserGroups()
-        },
         methods: {
-            loadUserGroups() {
-                return new CmsBackendClient()
-                    .loadUserGroups()
-                    .then(responseData => this.allUserGroups = responseData)
-                    .catch(error => {
-                        this.$store.commit("systemMessage", {status: "error", message: "The user groups could not be loaded!"})
-                        console.error(error)
-                    })
-            },
             editUserGroup (action, userGroupName, userGroupId, active) {
                 if(action === "delete") {
                     this.deleteUserGroup(userGroupId, userGroupName)

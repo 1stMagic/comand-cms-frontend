@@ -30,7 +30,7 @@
                                                 inner-icon-class="icon-security-settings"
                                                 labelText="Password:"
                                                 v-model:value="password"
-                                                required="required"
+                                                :required="!userDetail.id"
                                                 placeholder="Password"/>
                                 <CmdFormElement element="input"
                                                 id="repeat-password"
@@ -39,7 +39,7 @@
                                                 labelText="Repeat password:"
                                                 v-model:value="passwordRepeat"
                                                 @blur="blurRepeatPassword"
-                                                required="required"
+                                                :required="!userDetail.id || password"
                                                 placeholder="Repeat password"/>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                             <h3>Status</h3>
                             <div class="label inline">
                                 <span>Current profile status:</span>
-                                <CmdSwitchButton :id="'toggle-status-' + index"
+                                <CmdSwitchButton id="toggle-status"
                                                  type="checkbox"
                                                  onLabel="Active"
                                                  offLabel="Inactive"
@@ -106,42 +106,42 @@
                         <div class="flex-container vertical">
                             <h2>Address</h2>
                             <CmdFormElement element="input" type="text" labelText="Street/No:" v-model:value="userDetail.street" placeholder="Street"/>
-                            <CmdFormElement element="input" type="text" labelText="P.O. Box:" v-model:value="userDetail.street" placeholder="P.O. Box"/>
+                            <CmdFormElement element="input" type="text" labelText="P.O. Box:" v-model:value="userDetail.postOfficeBox" placeholder="P.O. Box"/>
                             <div class="flex-container input-wrapper">
                                 <CmdFormElement element="input" type="text" labelText="Zip:" v-model:value="userDetail.zip" placeholder="Zip"/>
                                 <CmdFormElement element="input" type="text" labelText="City:" v-model:value="userDetail.city" placeholder="City"/>
                             </div>
                             <CmdFakeSelect type="country" labelText="Country:" pathFlags="/media/images/flags" v-model:value="userDetail.country" :select-data='[
                                 {
-                                "isoCode": "cn",
-                                "countryName": "China",
+                                "value": "cn",
+                                "text": "China",
                                 },
                                 {
-                                "isoCode": "de",
-                                "countryName": "Germany",
+                                "value": "de",
+                                "text": "Germany",
                                 },
                                 {
-                                "isoCode": "en",
-                                "countryName": "United Kingdom",
+                                "value": "en",
+                                "text": "United Kingdom",
                                 },
                                 {
-                                "isoCode": "es",
-                                "countryName": "Spain",
+                                "value": "es",
+                                "text": "Spain",
                                 },
                                 {
-                                "isoCode": "fr",
-                                "countryName": "France",
+                                "value": "fr",
+                                "text": "France",
                                 },
                                 {
-                                "isoCode": "it",
-                                "countryName": "Italy",
+                                "value": "it",
+                                "text": "Italy",
                                 },
                                 {
-                                "isoCode": "ru",
-                                "countryName": "Russia",
+                                "value": "ru",
+                                "text": "Russia",
                                 }
                             ]'/>
-                            <CmdFormElement element="input" type="text" labelText="Misc. info:" v-model:value="userDetail.city" placeholder="Miscellaneous information"/>
+                            <CmdFormElement element="input" type="text" labelText="Misc. info:" v-model:value="userDetail.otherInformation" placeholder="Miscellaneous information"/>
                         </div>
                     </div>
                 </fieldset>
@@ -149,13 +149,13 @@
                     <button type="button" class="button add" @click="updateChanges()">
                         <span class="icon-check"></span><span>Save changes</span>
                     </button>
-                    <router-link :to="{ name: 'CmdEditModeEditUsersPage' }" class="button cancel">
+                    <router-link :to="{ name: 'CmdEditModeEditUsersPage', params: getRouterParams() }" class="button cancel">
                         <span class="icon-cancel"></span><span>Cancel changes</span>
                     </router-link>
                     <button type="button" :class="['button delete', {'disabled': !this.$route.params.userId}]" :disabled="!this.$route.params.userId" @click="deleteUser()">
                         <span class="icon-remove-user"></span><span>Delete user</span>
                     </button>
-                    <router-link :to="{ name: 'CmdEditModeEditUsersPage' }" class="button">
+                    <router-link :to="{ name: 'CmdEditModeEditUsersPage', params: {language: this.$store.state.language }}" class="button">
                         <span class="icon-single-arrow-left"></span><span>Back to list of users</span>
                     </router-link>
                 </div>
@@ -179,13 +179,16 @@ import {CmsBackendClient} from "../../client/CmsClient"
 
 // import utilities
 import {fullName} from "../../utilities/user"
+import {navigateTo} from "../../utilities/router"
+
+// import mixins
+import GetRouterParams from "../../mixins/GetRouterParams"
 
 export default {
     name: "CmdEditModeEditUserDetails",
     data() {
         return {
             userDetail: {},
-            userGroups: [],
             allUsers: [],
             indexOfUser: 0,
             password: "",
@@ -200,6 +203,9 @@ export default {
         CmdSwitchButton,
         CmdWidthLimitationWrapper
     },
+    mixins: [
+        GetRouterParams
+    ],
     computed: {
         previousUser() {
             let userNumber = 0
@@ -228,23 +234,14 @@ export default {
                     tooltip: "Next user (#" + userNumber + "/" + this.allUsers.length + ")"
                 }
             }
+        },
+        userGroups() {
+            return this.$store.state.userGroups.filter(userGroup => userGroup.active)
         }
-
     },
     created() {
         // get userId (= email-address) from URL-/router-parameter
         let userId = this.$route.params.userId
-
-        // load active user groups
-        new CmsBackendClient().loadUserGroups()
-            .then(responseData =>
-                // check for active-flag in userGroups-array with filter() and assign to data-property
-                this.userGroups = responseData.filter(userGroup => userGroup.active)
-            )
-            .catch(error => {
-                this.$store.commit("systemMessage", {status: "error", message: "The user groups could not be loaded!"})
-                console.error(error)
-            })
 
         // if no userId exists, reset all fields (to create new user)
         if (!userId) {
@@ -275,8 +272,6 @@ export default {
                     this.$router.push({name: 'CmdEditModeEditUsersPage'})
                     return
                 }
-
-                console.log("loadedUserDetail: ", loadedUserDetail)
 
                 /* call replaceNull method to replace null by string to avoid console-error for CmdFormElement
                    and assign to data-property (to keep method clean) */
@@ -323,16 +318,22 @@ export default {
             this.passwordRepeat = ""
         },
         updateChanges() {
-            // check if checkPassword renturs true (else return)
+            // check if checkPassword returns true (else return)
             if(!this.checkPasswords()) {
                 return
             }
 
             // update current user
             if (this.userDetail.id) {
+                if(this.password) {
+                    // add password to userDetail to save it
+                    this.userDetail.password = this.password
+                }
+
                 new CmsBackendClient().updateUser(this.userDetail)
                     .then(() => {
                         this.$store.commit("systemMessage", {status: "success", message: "The user " + fullName(this.userDetail) + " has been saved!"})
+                        navigateTo("CmdEditModeEditUsersPage")
                     })
                     .catch(error => {
                         this.$store.commit("systemMessage", {status: "error", message: "The changes for user " + fullName(this.userDetail) + " could not be saved!"})
@@ -342,15 +343,21 @@ export default {
 
             // create new user
             else {
+                // add password to userDetail to save it
+                this.userDetail.password = this.password
+
                 new CmsBackendClient().createUser(this.userDetail)
                     .then(() => {
                         this.$store.commit("systemMessage", {status: "success", message: "The user " + fullName(this.userDetail) + " has been created!"})
+                        this.$router.push({name: 'CmdEditModeEditUsersPage'})
                     })
                     .catch(error => {
                         this.$store.commit("systemMessage", {status: "error", message: "The changes for " + fullName(this.userDetail) + " could not be saved!"})
                         console.error(error)
                     })
             }
+
+
         },
         deleteUser() {
             if (!confirm("Delete profile of " + fullName(this.userDetail) + " completely?")) {
@@ -370,6 +377,9 @@ export default {
         replaceNull(userData) {
             // assign copy of loadedUserDetail to data-property
             const userEntry = JSON.parse(JSON.stringify(userData))
+
+            this.password = ""
+            this.passwordRepeat = ""
 
             for (const key in userEntry) {
                 if (userEntry[key] === null) {

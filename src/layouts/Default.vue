@@ -68,6 +68,7 @@ import CmdAddressData from "comand-component-library/src/components/CmdAddressDa
 import CmdFancyBox from "comand-component-library/src/components/CmdFancyBox"
 import {CmsFrontendClient} from "../client/CmsClient"
 import store from "../store"
+import {routerParams} from "../utilities/router";
 
 export default {
     data() {
@@ -127,8 +128,8 @@ export default {
             let items = this.$store.state.site.topNavigation
             let mappedItems = []
             mappedItems.push({
-                linkType: "href",
-                path: "#login",
+                linkType: "router",
+                path: {name: "LoginPage", params: routerParams()},
                 text: "Login",
                 icon: {}
             })

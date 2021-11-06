@@ -5,6 +5,7 @@ import ViewContainer from "../views/ViewContainer"
 import Page from "../views/Page"
 import CmdEditModeEditUsersPage from "../editmode/views/CmdEditModeEditUsersPage"
 import CmdEditModeEditUserDetails from "../editmode/views/CmdEditModeEditUserDetails"
+import LoginPage from "../views/LoginPage"
 
 const routes = [
   {
@@ -26,6 +27,11 @@ const routes = [
         path: "editmode/edit-user-details/:userId?",
         name: "CmdEditModeEditUserDetails",
         component: CmdEditModeEditUserDetails
+      },
+      {
+        path: "login",
+        name: "LoginPage",
+        component: LoginPage
       },
       {
         path: ":page(.+)*",

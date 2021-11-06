@@ -39,7 +39,7 @@ import "@/assets/css/global/editmode.scss"
 
 import * as componentLibraryComponents from "comand-component-library"
 
-import {CmsFrontendClient} from "./client/CmsClient"
+import {/*CmsBackendClient,*/ CmsFrontendClient} from "./client/CmsClient"
 
 /* load cms-configuration */
 axios.get(process.env.BASE_URL + "cms-config.json")
@@ -52,6 +52,8 @@ axios.get(process.env.BASE_URL + "cms-config.json")
     .then(site => {
         store.commit("site", site)
         store.commit("language", site.language)
+        // call action-method in store to load user-groups
+        store.dispatch("loadUserGroups")
         return site
     })
     .then(site => {

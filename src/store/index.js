@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import {CmsBackendClient} from "../client/CmsClient";
 
 export default createStore({
   state: {
@@ -25,7 +26,8 @@ export default createStore({
       id: "",
       name: "",
       active: false
-    }
+    },
+    userGroups: []
   },
   /* update states */
   mutations: {
@@ -60,9 +62,23 @@ export default createStore({
     },
     editUserGroupSettings(state, userGroupSettings) {
       state.editUserGroupSettings = userGroupSettings
+    },
+    userGroups(state, userGroups) {
+      state.userGroups = userGroups
     }
   },
   actions: {
+    loadUserGroups(context) {
+      new CmsBackendClient().loadUserGroups()
+          .then(userGroups =>
+              // commit user-groups to store
+              context.commit("userGroups", userGroups)
+          )
+          .catch(error => {
+            context.commit("systemMessage", {status: "error", message: "The user groups could not be loaded!"})
+            console.error(error)
+          })
+    }
   },
   modules: {
   },
