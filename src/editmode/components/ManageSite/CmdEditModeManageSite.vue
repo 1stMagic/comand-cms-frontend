@@ -97,8 +97,8 @@
                 </li>
                 <li>
                     <a href="#" @click.prevent="logout">
-                        <span class="icon-logout" :title="'Logout ' + username"></span>
-                        <span>Logout {{ username }}</span>
+                        <span class="icon-logout" :title="'Logout ' + $store.state.login.firstName + ' ' + $store.state.login.lastName"></span>
+                        <span>Logout {{ $store.state.login.firstName + ' ' + $store.state.login.lastName }}</span>
                     </a>
                 </li>
             </ul>
@@ -125,12 +125,13 @@ import CmdEditModeManageLocalization from "@/editmode/components/ManageSite/CmdE
 // import Cmd-components
 import CmdAccordion from "comand-component-library/src/components/CmdAccordion"
 
+import {navigateTo} from "../../../utilities/router"
+
 export default {
     data() {
         return {
             openManageSiteSidebar: true,
-            userLoggedIn: true,
-            username: "Raphael Biock"
+            userLoggedIn: true
         }
     },
     components: {
@@ -152,7 +153,14 @@ export default {
             return this.openManageContentSidebar = !this.openManageContentSidebar
         },
         logout() {
-            this.$store.commit("login", false)
+            // show system-message
+            this.$store.commit("systemMessage", {status: "success", message: "You were logged out successful!"})
+
+            // set logout status in store (also removes token from localStorage)
+            this.$store.commit("login", "")
+
+            // load index-page
+            navigateTo("Index")
         }
     }
 }

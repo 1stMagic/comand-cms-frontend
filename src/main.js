@@ -52,8 +52,6 @@ axios.get(process.env.BASE_URL + "cms-config.json")
     .then(site => {
         store.commit("site", site)
         store.commit("language", site.language)
-        // call action-method in store to load user-groups
-        store.dispatch("loadUserGroups")
         return site
     })
     .then(site => {

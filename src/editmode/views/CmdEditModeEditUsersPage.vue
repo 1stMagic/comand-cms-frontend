@@ -24,11 +24,14 @@
                 <td><a v-telephone="user.telephone" :title="'Call ' + user.telephone">{{ user.telephone }}</a></td>
                 <td>
                     <CmdSwitchButton :id="'toggle-status-' + index"
+                                     :class="{disabled: user.email === 'admin'}"
                                      type="checkbox"
                                      v-model:value="user.active"
                                      onLabel="Active"
                                      offLabel="Inactive"
                                      :colored="true"
+                                     :disabled="user.email === 'admin'"
+                                     :title="user.email === 'admin' ? 'Admin cannot be deactivated!' : ''"
                                      @update:value="toggleStatus(user)"
                     />
                 </td>

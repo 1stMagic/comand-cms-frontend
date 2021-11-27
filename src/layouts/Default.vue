@@ -3,7 +3,7 @@
         <CmdSystemMessage v-show="$store.getters.showSystemMessage" :status="$store.state.systemMessage.status"
                           :message="$store.state.systemMessage.message "/>
         <transition name="fade">
-            <CmdEditModeManageSite v-if="$store.state.login"/>
+            <CmdEditModeManageSite v-if="$store.getters.isLoggedIn"/>
         </transition>
         <CmdSiteHeader :navigation-entries="[]" :languages="[]" :close-offcanvas="{}"
                        :mainNavigationEntries="$store.state.site.mainNavigation" :sticky="true" @click="onNavigation">
@@ -31,7 +31,7 @@
         </CmdWidthLimitationWrapper>
         <CmdBackToTopButton tooltip="Back to top"/>
         <transition name="fade">
-            <CmdEditModeManageContents v-if="$store.state.login && $store.state.pageInformation"/>
+            <CmdEditModeManageContents v-if="$store.getters.isLoggedIn && $store.state.pageInformation"/>
         </transition>
         <transition name="fade">
             <CmdFancyBox v-model:show="$store.state.fancybox.show" :fancyboxOptions="{printButtons: false}">
@@ -179,8 +179,7 @@ export default {
             return null
         },
         executeSearch() {
-            let result = Math.floor(Math.random() * 100)
-            return result
+            return Math.floor(Math.random() * 100)
         },
         onNavigation(event) {
             const link = event.target.closest("a")
@@ -188,9 +187,9 @@ export default {
                 return
             }
             event.preventDefault()
-            if (link.attributes.href.nodeValue === '#login') {
-                this.$store.commit('login', true)
-            }
+            // if (link.attributes.href.nodeValue === '#login') {
+            //     this.$store.commit('login', true)
+            // }
             this.$router.push({
                 name: "Page",
                 params: {

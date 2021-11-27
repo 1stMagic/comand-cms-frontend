@@ -6,7 +6,6 @@ export default createStore({
     site: null,
     language: "de",
     api: null,
-    login: localStorage.getItem('login') === "true",
     systemMessage: {
       status: "",
       message: ""
@@ -27,7 +26,8 @@ export default createStore({
       name: "",
       active: false
     },
-    userGroups: []
+    userGroups: [],
+    login: JSON.parse(localStorage.getItem('login') || '{}')
   },
   /* update states */
   mutations: {
@@ -40,9 +40,10 @@ export default createStore({
     api(state, api) {
       state.api = api
     },
-    login(state, loggedin) {
-      localStorage.setItem('login', loggedin);
-      state.login = loggedin
+    login(state, login) {
+      // write loginToken into localStorage to maintain login-status if page is reloaded
+      localStorage.setItem('login', JSON.stringify(login))
+      state.login = login
     },
     systemMessage(state, systemMessage) {
       state.systemMessage.status = systemMessage.status
@@ -84,10 +85,10 @@ export default createStore({
   },
   getters: {
     showSystemMessage(state) {
-      if(state.systemMessage.status && state.systemMessage.message) {
-        return true
-      }
-      return false
+      return !!(state.systemMessage.status && state.systemMessage.message)
+    },
+    isLoggedIn(state) {
+      return !!state.login.token
     }
   }
 })

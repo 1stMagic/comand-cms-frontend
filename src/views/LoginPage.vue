@@ -13,7 +13,8 @@ import CmdLoginForm from "comand-component-library/src/components/CmdLoginForm"
 import CmdWidthLimitationWrapper from "comand-component-library/src/components/CmdWidthLimitationWrapper"
 
 // import axios
-import axios from "axios"
+import { CmsFrontendClient } from "../client/CmsClient"
+import {navigateTo} from "../utilities/router"
 
 export default {
     data() {
@@ -28,14 +29,24 @@ export default {
     methods: {
         submitLogin(event) {
             event.preventDefault()
-            console.log(event)
-            axios.post(event.target.action, this.loginData).then(
-                response => response.data
-            ).then(() => console.log("Login correct"))
-            .catch(error => {
-                this.$store.commit("systemMessage", {status: "error", message: "Login failed!"})
-                console.error(error)
-            })
+            new CmsFrontendClient().login(this.loginData)
+                .then(token => {
+                    // write loginToken into store
+                    this.$store.commit("login", {token: token, firstName: 'Raphael', lastName: 'Biock'})
+
+                    // call action-method in store to load user-groups
+                    this.$store.dispatch("loadUserGroups")
+
+                    // load login-page next
+                    navigateTo("Index")
+
+                    // show system-message
+                    this.$store.commit("systemMessage", {status: "success", message: "Login successful!"})
+                })
+                .catch(error => {
+                    this.$store.commit("systemMessage", {status: "error", message: "Login failed!"})
+                    console.error(error)
+                })
             return false
         }
     }

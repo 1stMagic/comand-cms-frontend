@@ -44,6 +44,9 @@ class CmsClient {
         if (store.state.language && (!requestOptions.headers || !requestOptions.headers["Accept-Language"])) {
             requestOptions.headers = requestOptions.headers || {}
             requestOptions.headers["Accept-Language"] = store.state.language
+            if (store.state.login.token) {
+                requestOptions.headers["Authorization"] = `Bearer ${store.state.login.token}`
+            }
         }
         return requestOptions
     }
@@ -84,6 +87,16 @@ export class CmsFrontendClient {
             this.#client.buildUrl(
                 "pages/of-site/{site}",
                 {relativePagePath: pageName.replace(/\.html$/, "")}))
+    }
+
+    login(login) {
+        const formData = new FormData()
+        formData.append("username", login.username)
+        formData.append("password", login.password)
+        return this.#client.post("sites/{site}/login", formData)
+            // headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            // data: login
+        // })
     }
 }
 
